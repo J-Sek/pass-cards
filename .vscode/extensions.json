@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "dariofuzinato.vue-peek",
+        "syler.sass-indented",
+        "vue.volar",
+        "ybaumes.highlight-trailing-white-spaces",
+        "yoavbls.pretty-ts-errors"
+    ]
+}

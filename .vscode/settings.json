@@ -1,0 +1,23 @@
+{
+    "task.autoDetect": "off",
+    "files.exclude": {
+        "**/.nuxt": true,
+        "**/coverage": true,
+        "**/dist": true,
+        "**/node_modules": true,
+        "**/Migrations": true,
+        "**/bin": true,
+        "**/obj": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/obj": true,
+        "**/.azurite": true,
+        "**/coverage": true,
+        "**/dist": true,
+        "**/fake-people.ts": true
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "Vue.volar"
+    }
+}

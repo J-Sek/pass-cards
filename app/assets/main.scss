@@ -1,0 +1,18 @@
+$default-font: 'Kanit', sans-serif;
+
+@use 'vuetify' with (
+  $heading-font-family: $default-font,
+  $body-font-family: $default-font,
+);
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 7px;
+  background-color: rgb(var(--v-theme-scroll));
+  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+}
