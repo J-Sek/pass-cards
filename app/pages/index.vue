@@ -100,10 +100,10 @@ const allCharacters = computed<TSign[]>(() => [
 
   '1234567890'.split('').map(v => ({ value: v, color: 'secondary' })),
   '!?@#$%&'.split('').map(v => ({ value: v, color: 'success' })),
-  '+-|'.split('').map(v => ({ value: v, color: 'info' })),
+  '+------|······'.split('').map(v => ({ value: v, color: 'info' })),
 
   [
-    '€§·↓', // ALT +         5|7|8|U
+    '€§↓',  // ALT +         5|7|U
     '¡¿↑',  // ALT + SHIFT + 1|2|U
   ].join('').split('').map(v => ({ value: v, color: 'error' })),
 ].flatMap(x => x))
