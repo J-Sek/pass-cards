@@ -28,7 +28,7 @@ v-main
               :icon='showSettings ? "mdi-arrow-left" : "mdi-cog-outline"'
               @click='showSettings = !showSettings'
             )
-            v-btn(size='small' variant='text' icon='mdi-restore')
+            v-btn(size='small' variant='text' icon='mdi-restore' @click='pin = ""')
 
   .d-flex.align-center.justify-center
     .cards-grid.py-6
