@@ -19,11 +19,15 @@ v-main
       v-card.pa-6(width='400' style='z-index: 1')
         .d-flex.mb-n3
           v-form
-            v-text-field(prefix='Username:' persistent-placeholder)
-            v-otp-input.mx-n2(:length='6' persistent-placeholder maxLength='4' type='text')
+            v-text-field(prefix='Username:' persistent-placeholder v-model='username')
+            v-otp-input.mx-n2(:length='pinLength' persistent-placeholder type='text' v-model='pin')
           v-divider.ml-3.mr-1(vertical)
           .d-flex.flex-column.ga-2.mr-n6
-            v-btn(size='small' variant='text' icon='mdi-cog-outline' @click='showSettings = !showSettings')
+            v-btn(
+              size='small' variant='text'
+              :icon='showSettings ? "mdi-arrow-left" : "mdi-cog-outline"'
+              @click='showSettings = !showSettings'
+            )
             v-btn(size='small' variant='text' icon='mdi-restore')
 
   .d-flex.align-center.justify-center
@@ -42,7 +46,8 @@ v-main
 
   v-dialog(
     v-if='selectedCard'
-    v-model='showCard'
+    :model-value='selectedCardVisible'
+    @update:model-value='showCard = false'
     :target='cardPreviews[selectedCard.index]'
     :min-width='cardColumns * 30 - 4 + 48'
     :width='zoomLevel * cardColumns * 30 - 4 + 48'
@@ -57,11 +62,13 @@ const { width: windowWidth } = useWindowSize()
 
 const username = useLocalStorage('username', '')
 const pin = ref('')
+const pinLength = 4
 
 const showSettings = ref(false)
 const selectedCard = ref<any | null>(null)
 const cardPreviews = ref([])
 const showCard = ref(false)
+const selectedCardVisible = refDebounced(showCard, 100)
 const zoomLevel = computed(() => windowWidth.value > 800 ? 2 : Math.max(1, windowWidth.value / 400))
 
 const setRowsOptions = [1, 2, 3, 4]
@@ -74,11 +81,18 @@ const fontFamilyOptions = ['Azeret Mono', 'Red Hat Mono']
 const fontFamily = useLocalStorage('font-family', 'Azeret Mono')
 const fontClass = computed(() => `font-${fontFamilyOptions.indexOf(fontFamily.value)}`)
 
-const setColumns = ref(3)
-const cardColumns = ref(10)
-const cardRows = ref(10)
+const setColumns = 3
+const cardColumns = 10
+const cardRows = 10
 
-const allCharacters = computed(() => [
+const seed = computed(() => {
+  if (!username.value?.length || pin.value?.length != pinLength)
+    return 0
+  return hashCode(username.value + String(pin.value))
+})
+
+type TSign = { value: string, color: string }
+const allCharacters = computed<TSign[]>(() => [
   [
     'abcdefghijklmnopqrstuvwxyz',
     'abcdefghijklmnopqrstuvwxyz'.toUpperCase(),
@@ -90,17 +104,29 @@ const allCharacters = computed(() => [
 
   [
     '€§·↓', // ALT +         5|7|8|U
-    '¡¿±↑', // ALT + SHIFT + 1|2|9|U|M
+    '¡¿↑',  // ALT + SHIFT + 1|2|U
   ].join('').split('').map(v => ({ value: v, color: 'error' })),
 ].flatMap(x => x))
 
-const cards = computed(() => Array.from({ length: setColumns.value * setRows.value })
-  .map((_, ci) => ({
-    index: ci,
-    characters: Array.from({ length: cardColumns.value * cardRows.value })
-      .map((_, chi) => randomElement(allCharacters.value)),
-  }))
-)
+type TCard = { index: number, characters: TSign[] }
+const cards = shallowRef<TCard[]>([])
+
+function computeCards() {
+  if (!seed.value) {
+    cards.value = []
+  } else {
+    const r = new Randomizer(seed.value)
+    cards.value = Array.from({ length: setColumns * setRows.value })
+      .map((_, ci) => ({
+        index: ci,
+        characters: Array.from({ length: cardColumns * cardRows })
+          .map((_, chi) => r.nextElement(allCharacters.value)),
+      }))
+  }
+}
+
+watch(setRows, computeCards)
+watch(seed, computeCards, { immediate: true })
 </script>
 
 <style lang="sass" scoped>
