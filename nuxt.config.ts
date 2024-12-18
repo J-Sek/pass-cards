@@ -27,7 +27,9 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#211b3d' },
       ],
       link: [
-        { rel: "icon", type: "image/svg+xml", href: "/images/icon.svg" },
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        { rel: 'apple-touch-icon', href: '/images/pwa/icon-192.png' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/images/icon.svg' },
       ],
     },
     pageTransition: { name: 'fade-transition', mode: 'out-in' },
@@ -48,6 +50,7 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     'unplugin-fonts/nuxt',
+    '@vite-pwa/nuxt',
     '@nuxtjs/plausible',
   ],
 
@@ -60,10 +63,55 @@ export default defineNuxtConfig({
   unfonts: {
     fontsource: {
       families: [
-        { name: 'Azeret Mono', weights: [400, 500, 700] },
-        { name: 'Red Hat Mono', weights: [400, 500, 700] },
-        { name: 'Kanit', weights: [400, 500, 700] },
+        { name: 'Azeret Mono', weights: [400], subset: 'latin' },
+        { name: 'Red Hat Mono', weights: [500], subset: 'latin' },
+        { name: 'Kanit', weights: [400, 500, 700], subset: 'latin' },
       ],
+    },
+  },
+
+  pwa: {
+    strategies: 'injectManifest',
+    srcDir: 'service-worker',
+    filename: 'sw.ts',
+    registerType: 'autoUpdate',
+    manifest: {
+      id: '/',
+      name: appTitle,
+      short_name: appTitle,
+      theme_color: '#dfd5ff',
+      description: appDescription,
+      icons: [
+        { src: '/images/pwa/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: '/images/pwa/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: '/images/pwa/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ],
+      screenshots : [
+        {
+          src: '/images/screenshot.jpg',
+          sizes: '1280x720',
+          type: 'image/jpg',
+          platform: 'wide',
+        }
+      ],
+      orientation: 'any',
+      categories: ['security']
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    injectManifest: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: true,
+      suppressWarnings: true,
+      navigateFallback: '/',
+      navigateFallbackAllowlist: [/^\/$/],
+      type: 'module',
     },
   },
 
