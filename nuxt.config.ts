@@ -48,6 +48,7 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     'unplugin-fonts/nuxt',
+    '@nuxtjs/plausible',
   ],
 
   components: [{ path: 'components', pathPrefix: false, extensions: ['vue'] }],
@@ -81,6 +82,9 @@ export default defineNuxtConfig({
     },
   },
 
+  plausible: {
+    domain: targetDomain,
+  },
 
   compatibilityDate: '2024-12-16',
 })
