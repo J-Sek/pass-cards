@@ -129,6 +129,7 @@ watch(setRows, computeCards)
 watch(seed, computeCards, { immediate: true })
 
 const autofill = useRouteQuery('autofill', '', { transform: Number })
+
 onMounted(() => {
   if (autofill.value) {
     username.value = 'yolo'

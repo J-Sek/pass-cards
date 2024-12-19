@@ -78,8 +78,10 @@ export default defineNuxtConfig({
       id: '/',
       name: appTitle,
       short_name: appTitle,
-      theme_color: '#dfd5ff',
+      theme_color: '#211b3d',
       description: appDescription,
+      display_override: ['minimal-ui'],
+      display: 'standalone',
       icons: [
         { src: '/images/pwa/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
         { src: '/images/pwa/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

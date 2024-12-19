@@ -3,9 +3,11 @@ import { useTheme } from 'vuetify'
 export function useAppTheme() {
   const { global } = useTheme()
   const preferred = usePreferredColorScheme()
+  const forceDark = useRouteQuery('dark', '', { transform: Boolean })
 
   if (localStorage.theme === 'dark'
     || !localStorage.theme && preferred.value === 'dark'
+    || forceDark.value
   ) {
     global.name.value = 'dark'
   }
