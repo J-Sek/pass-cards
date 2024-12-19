@@ -19,5 +19,4 @@ registerRoute(new NavigationRoute(
   { allowlist },
 ))
 
-self.skipWaiting()
 clientsClaim()
