@@ -99,10 +99,10 @@ export default defineNuxtConfig({
       categories: ['security']
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,txt}'],
     },
     injectManifest: {
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,txt}'],
     },
     client: {
       installPrompt: true,

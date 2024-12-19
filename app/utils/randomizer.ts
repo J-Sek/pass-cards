@@ -10,9 +10,14 @@ function mulberry32(seed: number) {
 
 export class Randomizer {
   private readonly _next: () => number
+  private _words: string[] = []
 
   constructor(seed: number) {
     this._next = mulberry32(seed)
+  }
+
+  setWords(array: string[]) {
+    this._words = array;
   }
 
   nextNumber(max: number): number {
@@ -21,6 +26,10 @@ export class Randomizer {
 
   nextElement<T>(array: T[]): T {
     return array[this.nextNumber(array.length - 1)]!
+  }
+
+  nextWord(): string {
+    return this._words[this.nextNumber(this._words.length - 1)]!
   }
 }
 

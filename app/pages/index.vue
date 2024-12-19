@@ -41,8 +41,9 @@ v-main
         @click='selectedCard = card; showCard = true'
       )
         .card-characters
-          v-chip(:variant='chipVariant' v-for='(ch, i) in card.characters' :key='i' :color='ch.color') ◉
+          v-chip(:variant='chipVariant' v-for='(ch, i) in card.characters' :key='i' :color='ch.color') ·
           // ◉ | ▣ | ⬢
+        .card-number {{ card.index + 1 }} / {{ cards.length }}
 
   v-dialog(
     v-if='selectedCard'
@@ -56,9 +57,13 @@ v-main
     v-card.pa-6(:style='{ zoom: zoomLevel }' :class='fontClass' border)
       .card-characters(:style='`grid-template-columns: repeat(${cardColumns}, 1fr)`')
         v-chip(:variant='chipVariant' v-for='(ch, i) in selectedCard.characters' :key='i' :color='ch.color') {{ ch.value }}
+      .card-number {{ selectedCard.index + 1 }} / {{ cards.length }}
 </template>
 
 <script setup lang="ts">
+import { useWords } from '~/composables/words';
+import { waitFor } from '~/utils/timing';
+
 const { width: windowWidth } = useWindowSize()
 
 const username = useLocalStorage('username', '')
@@ -70,13 +75,13 @@ const selectedCard = ref<any | null>(null)
 const cardPreviews = ref([])
 const showCard = ref(false)
 const selectedCardVisible = refDebounced(showCard, 100)
-const zoomLevel = computed(() => windowWidth.value > 700 ? 2 : Math.max(1, windowWidth.value / 350))
+const zoomLevel = computed(() => windowWidth.value > 740 ? 2 : Math.max(1, windowWidth.value / 370))
 
 const setRowsOptions = [1, 2, 3, 4]
 const setRows = useLocalStorage('set-rows', 1)
 
 const chipVariants = ['text', 'tonal', 'flat', 'outlined']
-const chipVariant = useLocalStorage('chip-variant', 'tonal')
+const chipVariant = useLocalStorage<'text' | 'tonal' | 'flat' | 'outlined'>('chip-variant', 'tonal')
 
 const fontFamilyOptions = ['Azeret Mono', 'Red Hat Mono']
 const fontFamily = useLocalStorage('font-family', 'Azeret Mono')
@@ -93,6 +98,8 @@ const seed = computed(() => {
 })
 
 type TSign = { value: string, color: string }
+
+const separators = computed<TSign[]>(() => '+------|······'.split('').map(v => ({ value: v, color: 'info' })))
 const allCharacters = computed<TSign[]>(() => [
   [
     'abcdefghijklmnopqrstuvwxyz',
@@ -101,8 +108,7 @@ const allCharacters = computed<TSign[]>(() => [
 
   '1234567890'.split('').map(v => ({ value: v, color: 'secondary' })),
   '!?@#$%&'.split('').map(v => ({ value: v, color: 'success' })),
-  '+------|······'.split('').map(v => ({ value: v, color: 'info' })),
-
+  separators.value,
   [
     '€§↓',  // ALT +         5|7|U
     '¡¿↑',  // ALT + SHIFT + 1|2|U
@@ -112,16 +118,26 @@ const allCharacters = computed<TSign[]>(() => [
 type TCard = { index: number, characters: TSign[] }
 const cards = shallowRef<TCard[]>([])
 
-function computeCards() {
+const { loadWords, wordsArray } = useWords()
+
+async function computeCards() {
   if (!seed.value) {
     cards.value = []
   } else {
     const r = new Randomizer(seed.value)
+    loadWords()
+    await waitFor(() => wordsArray.value.length > 0, 50)
+    r.setWords(wordsArray.value)
     cards.value = Array.from({ length: setColumns * setRows.value })
       .map((_, ci) => ({
         index: ci,
-        characters: Array.from({ length: cardColumns * cardRows })
-          .map((_, chi) => r.nextElement(allCharacters.value)),
+        characters: [
+          ...r.nextWord().split('')
+            .map((v) => ({ value: v, color: 'primary' })),
+          r.nextElement(separators.value),
+          ...Array.from({ length: cardColumns * cardRows - 8 })
+            .map((_, chi) => r.nextElement(allCharacters.value)),
+        ],
       }))
   }
 }
@@ -131,14 +147,14 @@ watch(seed, computeCards, { immediate: true })
 
 const autofill = useRouteQuery('autofill', '', { transform: Number })
 
-onMounted(() => {
+onMounted(async () => {
   if (autofill.value) {
     username.value = 'yolo'
     pin.value = '2077'
-    nextTick(() => {
-      selectedCard.value = cards.value.at(autofill.value)
-      showCard.value = true
-    })
+    await nextTick()
+    await waitFor(() => cards.value.length > 0, 50)
+    selectedCard.value = cards.value.at(autofill.value)
+    showCard.value = true
   }
 })
 </script>
@@ -172,6 +188,14 @@ onMounted(() => {
     justify-content: center
     width: calc(var(--v-chip-height) + 0px)
 
+.card-number
+  opacity: .2
+  position: absolute
+  font-size: .7rem
+  bottom: 3px
+  left: 50%
+  transform: translateX(-50%)
+
 .settings-card
   position: absolute
   width: 332px
@@ -185,16 +209,18 @@ onMounted(() => {
   transition: transform .3s ease-in-out
 
   &.settings-card--visible
-    --card-shift-y: calc(100% - 24px)
+    --card-shift-y: calc(100% - 18px)
 
     .settings-card__content
-      padding-top: 12px
+      padding-top: 8px
 
     + .v-card
       margin-bottom: 130px
 
   .settings-card__content
     padding-left: 8px
+    padding-bottom: 2px
+    transition: padding-top .3s ease-in-out
 
   + .v-card
     transition: margin-bottom .3s ease-in-out
@@ -211,9 +237,13 @@ onMounted(() => {
       --card-shift-x: 340px
 
       .settings-card__content
-        padding-left: 12px
         padding-top: 0
 
       + .v-card
         margin-bottom: 0
+
+    .settings-card__content
+      padding-left: 12px
+      padding-top: 0
+      padding-bottom: 0
 </style>
