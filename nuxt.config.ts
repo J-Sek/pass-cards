@@ -47,7 +47,6 @@ export default defineNuxtConfig({
       });
     },
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     'unplugin-fonts/nuxt',
     '@vite-pwa/nuxt',
@@ -107,7 +106,7 @@ export default defineNuxtConfig({
       installPrompt: true,
     },
     devOptions: {
-      enabled: true,
+      enabled: false,
       suppressWarnings: true,
       navigateFallback: '/',
       navigateFallbackAllowlist: [/^\/$/],
@@ -130,8 +129,16 @@ export default defineNuxtConfig({
     },
   },
 
-  plausible: {
-    domain: targetDomain,
+  $development: {
+    plausible: {
+      enabled: false,
+    },
+  },
+
+  $production: {
+    plausible: {
+      domain: targetDomain,
+    },
   },
 
   compatibilityDate: '2024-12-16',

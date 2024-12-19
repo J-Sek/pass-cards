@@ -127,6 +127,18 @@ function computeCards() {
 
 watch(setRows, computeCards)
 watch(seed, computeCards, { immediate: true })
+
+const autofill = useRouteQuery('autofill', '', { transform: Number })
+onMounted(() => {
+  if (autofill.value) {
+    username.value = 'yolo'
+    pin.value = '2077'
+    nextTick(() => {
+      selectedCard.value = cards.value.at(autofill.value)
+      showCard.value = true
+    })
+  }
+})
 </script>
 
 <style lang="sass" scoped>
