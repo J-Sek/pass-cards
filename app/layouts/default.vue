@@ -7,6 +7,12 @@ v-app.bg-surface-container
         .ml-3 #[b(:style='{ color: isDark ? "#e1b847" : "" }') Pass Cards]
   v-footer.border-t.pr-2(app)
     .d-flex.align-center &copy; 2024 #[v-divider.mx-3.my-1(vertical opacity='.7')] J_SEK Solutions
+    v-btn.ml-2.my-n3.opacity-60(
+      variant='text' rounded='lg' size='small' color='primary'
+      icon='mdi-card-account-details-outline'
+      target='_blank' href='https://jsek.work/'
+      v-tooltip:bottom='"Open developer website"'
+    )
     v-btn.ml-auto.bg-surface-dim.my-n3(rounded='lg' size='small' icon='mdi-theme-light-dark' @click='toggleTheme' v-tooltip:bottom='"Toggle theme"')
   slot
 </template>
