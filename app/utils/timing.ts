@@ -1,3 +1,7 @@
+export function delay(ms: number) {
+  return new Promise(r => setTimeout(r, ms))
+}
+
 export function waitFor(check: () => boolean, ms: number) {
   let totalTime = 0;
   return new Promise<void>((resolve, reject) => {

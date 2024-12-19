@@ -31,7 +31,8 @@ v-main
             v-btn(size='small' variant='text' icon='mdi-restore' @click='pin = ""')
 
   .d-flex.align-center.justify-center
-    .cards-grid.py-6
+    v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
+    .cards-grid.py-6(v-else-if='cards.length')
       v-card.pa-6(
         :width='cardColumns * 30 - 4 + 48'
         v-for='card in cards'
@@ -115,6 +116,8 @@ const allCharacters = computed<TSign[]>(() => [
   ].join('').split('').map(v => ({ value: v, color: 'error' })),
 ].flatMap(x => x))
 
+const isLoadingCards = ref(false)
+
 type TCard = { index: number, characters: TSign[] }
 const cards = shallowRef<TCard[]>([])
 
@@ -124,10 +127,13 @@ async function computeCards() {
   if (!seed.value) {
     cards.value = []
   } else {
+    isLoadingCards.value = true
     const r = new Randomizer(seed.value)
     loadWords()
     await waitFor(() => wordsArray.value.length > 0, 50)
     r.setWords(wordsArray.value)
+    await delay(150)
+    // TODO: push to background worker
     cards.value = Array.from({ length: setColumns * setRows.value })
       .map((_, ci) => ({
         index: ci,
@@ -139,6 +145,8 @@ async function computeCards() {
             .map((_, chi) => r.nextElement(allCharacters.value)),
         ],
       }))
+    await delay(150)
+    isLoadingCards.value = false
   }
 }
 
