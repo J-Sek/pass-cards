@@ -25,10 +25,10 @@ v-main
           .d-flex.flex-column.ga-2.mr-n4
             v-btn(
               size='small' variant='text'
-              :icon='showSettings ? (windowWidth > 1200 ? "mdi-arrow-left" : "mdi-arrow-up") : "mdi-cog-outline"'
+              :icon='showSettings ? (windowWidth > 1200 ? mdiArrowLeft : mdiArrowUp) : mdiCogOutline'
               @click='showSettings = !showSettings'
             )
-            v-btn(size='small' variant='text' icon='mdi-restore' @click='pin = ""')
+            v-btn(size='small' variant='text' :icon='mdiRestore' @click='pin = ""')
 
   .d-flex.align-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
@@ -67,6 +67,7 @@ v-main
 </template>
 
 <script setup lang="ts">
+import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
 import { useWords } from '~/composables/words';
 import { waitFor } from '~/utils/timing';
 
