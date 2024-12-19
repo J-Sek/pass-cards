@@ -32,33 +32,38 @@ v-main
 
   .d-flex.align-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
-    .cards-grid.py-6(v-else-if='cards.length')
-      v-card.pa-6(
-        :width='cardColumns * 30 - 4 + 48'
+    .cards-grid.py-6(
+      v-else-if='cards.length'
+      :class='fontClass'
+    )
+      pass-card(
         v-for='card in cards'
         :key='card.index'
-        :class='fontClass'
-        ref='cardPreviews'
+        :characters='card.characters'
+        :chip-variant='chipVariant'
+        :footer='`${card.index + 1} / ${cards.length}`'
+        preview
         @click='selectedCard = card; showCard = true'
+        ref='cardPreviews'
       )
-        .card-characters
-          v-chip(:variant='chipVariant' v-for='(ch, i) in card.characters' :key='i' :color='ch.color') ·
-          // ◉ | ▣ | ⬢
-        .card-number {{ card.index + 1 }} / {{ cards.length }}
 
   v-dialog(
     v-if='selectedCard'
     :model-value='selectedCardVisible'
     @update:model-value='showCard = false'
     :target='cardPreviews[selectedCard.index]'
-    :min-width='cardColumns * 30 - 4 + 48'
-    :width='zoomLevel * (cardColumns * 30 - 4 + 48)'
+    :min-width='cardSize * 30 - 4 + 48'
+    :width='zoomLevel * (cardSize * 30 - 4 + 48)'
+    :content-class='fontClass'
     scrim='#000'
   )
-    v-card.pa-6(:style='{ zoom: zoomLevel }' :class='fontClass' border)
-      .card-characters(:style='`grid-template-columns: repeat(${cardColumns}, 1fr)`')
-        v-chip(:variant='chipVariant' v-for='(ch, i) in selectedCard.characters' :key='i' :color='ch.color') {{ ch.value }}
-      .card-number {{ selectedCard.index + 1 }} / {{ cards.length }}
+    pass-card(
+      :characters='selectedCard.characters'
+      :chip-variant='chipVariant'
+      :style='{ zoom: zoomLevel }'
+      :footer='`${selectedCard.index + 1} / ${cards.length}`'
+      border
+    )
 </template>
 
 <script setup lang="ts">
@@ -89,16 +94,13 @@ const fontFamily = useLocalStorage('font-family', 'Azeret Mono')
 const fontClass = computed(() => `font-${fontFamilyOptions.indexOf(fontFamily.value)}`)
 
 const setColumns = 3
-const cardColumns = 10
-const cardRows = 10
+const cardSize = 10
 
 const seed = computed(() => {
   if (!username.value?.length || pin.value?.length != pinLength)
     return 0
   return hashCode(username.value + String(pin.value))
 })
-
-type TSign = { value: string, color: string }
 
 const separators = computed<TSign[]>(() => '+------|······'.split('').map(v => ({ value: v, color: 'info' })))
 const allCharacters = computed<TSign[]>(() => [
@@ -118,7 +120,6 @@ const allCharacters = computed<TSign[]>(() => [
 
 const isLoadingCards = ref(false)
 
-type TCard = { index: number, characters: TSign[] }
 const cards = shallowRef<TCard[]>([])
 
 const { loadWords, wordsArray } = useWords()
@@ -141,7 +142,7 @@ async function computeCards() {
           ...r.nextWord().split('')
             .map((v) => ({ value: v, color: 'primary' })),
           r.nextElement(separators.value),
-          ...Array.from({ length: cardColumns * cardRows - 8 })
+          ...Array.from({ length: cardSize ** 2 - 8 })
             .map((_, chi) => r.nextElement(allCharacters.value)),
         ],
       }))
@@ -183,26 +184,6 @@ onMounted(async () => {
   padding: 12px
   max-width: 100vw
   overflow-x: auto
-
-.card-characters
-  display: grid
-  grid-template-columns: repeat(v-bind(cardColumns), 1fr)
-  gap: 4px
-
-  > .v-chip
-    font-family: var(--code-font-family), monospace
-    font-weight: var(--code-font-weight)
-    padding: 0
-    justify-content: center
-    width: calc(var(--v-chip-height) + 0px)
-
-.card-number
-  opacity: .2
-  position: absolute
-  font-size: .7rem
-  bottom: 3px
-  left: 50%
-  transform: translateX(-50%)
 
 .settings-card
   position: absolute
