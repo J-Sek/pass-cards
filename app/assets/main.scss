@@ -21,6 +21,10 @@ $default-font: 'Kanit', sans-serif;
   backdrop-filter: blur(5px);
 }
 
+.v-dialog .v-overlay__content:has(.pass-card) {
+  margin-top: 64px;
+}
+
 :root {
   --v-overlay-opacity: .5;
 }

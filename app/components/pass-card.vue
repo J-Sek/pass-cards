@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card.pa-6(
+v-card.pa-6.pass-card(
   :width='cardSize * 30 - 4 + 48'
   v-bind='$attrs'
 )

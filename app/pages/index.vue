@@ -71,7 +71,7 @@ import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
 import { useWords } from '~/composables/words';
 import { waitFor } from '~/utils/timing';
 
-const { width: windowWidth } = useWindowSize()
+const { width: windowWidth, height: windowHeight } = useWindowSize()
 
 const username = useLocalStorage('username', '')
 const pin = ref('')
@@ -82,7 +82,10 @@ const selectedCard = ref<any | null>(null)
 const cardPreviews = ref([])
 const showCard = ref(false)
 const selectedCardVisible = refDebounced(showCard, 100)
-const zoomLevel = computed(() => windowWidth.value > 740 ? 2 : Math.max(1, windowWidth.value / 370))
+const zoomLevel = computed(() => {
+  const viewportSize = Math.min(windowWidth.value, windowHeight.value - 64)
+  return viewportSize > 740 ? 2 : Math.max(1, viewportSize / 370)
+})
 
 const setRowsOptions = [1, 2, 3, 4]
 const setRows = useLocalStorage('set-rows', 1)
