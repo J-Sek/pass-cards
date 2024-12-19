@@ -80,7 +80,7 @@ export default defineNuxtConfig({
       short_name: appTitle,
       theme_color: '#211b3d',
       description: appDescription,
-      display_override: ['minimal-ui'],
+      display_override: ['window-controls-overlay'],
       display: 'standalone',
       icons: [
         { src: '/images/pwa/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

@@ -24,3 +24,8 @@ $default-font: 'Kanit', sans-serif;
 :root {
   --v-overlay-opacity: .5;
 }
+
+.v-app-bar {
+  -webkit-app-region: drag;
+  z-index: 9999 !important;
+}
