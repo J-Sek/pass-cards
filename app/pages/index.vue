@@ -2,30 +2,30 @@
 v-main
   .d-flex.align-center.justify-center.pt-6
     .d-flex.align-center.position-relative
-      v-card.py-1.px-3.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
+      v-card.py-1.px-2.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
         .settings-card__content
           .d-flex.align-center
-            .text-body-2(style='width: 55px') Rows:
+            .text-body-2(style='width: 50px') Rows:
             v-chip-group(v-model='setRows')
               v-chip(v-for='v in setRowsOptions' :key='v' :value='v') {{ v }}
           .d-flex.align-center.mt-n1
-            .text-body-2(style='width: 55px') Style:
+            .text-body-2(style='width: 50px') Style:
             v-chip-group.text-uppercase(v-model='chipVariant')
               v-chip(v-for='v in chipVariants' :key='v' :value='v') {{ v }}
           .d-flex.align-center.mt-n1
-            .text-body-2(style='width: 55px') Font:
+            .text-body-2(style='width: 50px') Font:
             v-chip-group.text-uppercase(v-model='fontFamily')
               v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v') {{ v }}
-      v-card.pa-6(width='400' style='z-index: 1')
+      v-card.pa-6.mx-3(width='350' style='z-index: 1')
         .d-flex.mb-n3
           v-form
             v-text-field(prefix='Username:' persistent-placeholder v-model='username')
             v-otp-input.mx-n2(:length='pinLength' persistent-placeholder type='text' v-model='pin')
           v-divider.ml-3.mr-1(vertical)
-          .d-flex.flex-column.ga-2.mr-n6
+          .d-flex.flex-column.ga-2.mr-n4
             v-btn(
               size='small' variant='text'
-              :icon='showSettings ? "mdi-arrow-left" : "mdi-cog-outline"'
+              :icon='showSettings ? (windowWidth > 1200 ? "mdi-arrow-left" : "mdi-arrow-up") : "mdi-cog-outline"'
               @click='showSettings = !showSettings'
             )
             v-btn(size='small' variant='text' icon='mdi-restore' @click='pin = ""')
@@ -50,9 +50,10 @@ v-main
     @update:model-value='showCard = false'
     :target='cardPreviews[selectedCard.index]'
     :min-width='cardColumns * 30 - 4 + 48'
-    :width='zoomLevel * cardColumns * 30 - 4 + 48'
+    :width='zoomLevel * (cardColumns * 30 - 4 + 48)'
+    scrim='#000'
   )
-    v-card.pa-6(:style='{ zoom: zoomLevel }' :class='fontClass')
+    v-card.pa-6(:style='{ zoom: zoomLevel }' :class='fontClass' border)
       .card-characters(:style='`grid-template-columns: repeat(${cardColumns}, 1fr)`')
         v-chip(:variant='chipVariant' v-for='(ch, i) in selectedCard.characters' :key='i' :color='ch.color') {{ ch.value }}
 </template>
@@ -69,7 +70,7 @@ const selectedCard = ref<any | null>(null)
 const cardPreviews = ref([])
 const showCard = ref(false)
 const selectedCardVisible = refDebounced(showCard, 100)
-const zoomLevel = computed(() => windowWidth.value > 800 ? 2 : Math.max(1, windowWidth.value / 400))
+const zoomLevel = computed(() => windowWidth.value > 700 ? 2 : Math.max(1, windowWidth.value / 350))
 
 const setRowsOptions = [1, 2, 3, 4]
 const setRows = useLocalStorage('set-rows', 1)
@@ -169,10 +170,11 @@ onMounted(() => {
     font-weight: var(--code-font-weight)
     padding: 0
     justify-content: center
+    width: calc(var(--v-chip-height) + 0px)
 
 .settings-card
   position: absolute
-  width: 360px
+  width: 332px
   z-index: 0
   top: 2px
   left: 20px
@@ -198,18 +200,20 @@ onMounted(() => {
     transition: margin-bottom .3s ease-in-out
 
   @media (min-width: 1200px)
-    left: 0px
-    right: 0px
-    width: 370px
+    left: 12px
+    top: 6px
+    bottom: 6px
+    width: 344px
+    padding-top: 0 !important
 
     &.settings-card--visible
       --card-shift-y: 0%
-      --card-shift-x: 376px
+      --card-shift-x: 340px
+
+      .settings-card__content
+        padding-left: 12px
+        padding-top: 0
 
       + .v-card
         margin-bottom: 0
-
-    .settings-card__content
-      padding-top: 0 !important
-      padding-left: 24px
 </style>
