@@ -1,5 +1,5 @@
 <template lang="pug">
-v-main
+v-main(scrollable)
   .d-flex.align-center.justify-center.pt-6
     .d-flex.align-center.position-relative
       v-card.py-1.px-2.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
@@ -36,34 +36,18 @@ v-main
       v-else-if='cards.length'
       :class='fontClass'
     )
-      pass-card(
-        v-for='card in cards'
-        :key='card.index'
-        :characters='card.characters'
-        :chip-variant='chipVariant'
-        :footer='`${card.index + 1} / ${cards.length}`'
-        preview
-        @click='selectedCard = card; showCard = true'
-        ref='cardPreviews'
+      .v-card-outter(
+        v-for='card in cards' :key='card.index'
+        :style='{ width: `${cardSize * 30 - 4 + 48}px` }'
       )
-
-  v-dialog(
-    v-if='selectedCard'
-    :model-value='selectedCardVisible'
-    @update:model-value='showCard = false'
-    :target='cardPreviews[selectedCard.index]'
-    :min-width='cardSize * 30 - 4 + 48'
-    :width='zoomLevel * (cardSize * 30 - 4 + 48)'
-    :content-class='fontClass'
-    scrim='#000'
-  )
-    pass-card(
-      :characters='selectedCard.characters'
-      :chip-variant='chipVariant'
-      :style='{ zoom: zoomLevel }'
-      :footer='`${selectedCard.index + 1} / ${cards.length}`'
-      border
-    )
+        pass-card(
+          :zoom-level='zoomLevel'
+          :characters='card.characters'
+          :chip-variant='chipVariant'
+          :footer='`${card.index + 1} / ${cards.length}`'
+          :ripple='false'
+          ref='cardsRef'
+        )
 </template>
 
 <script setup lang="ts">
@@ -78,10 +62,7 @@ const pin = ref('')
 const pinLength = 4
 
 const showSettings = ref(false)
-const selectedCard = ref<any | null>(null)
-const cardPreviews = ref([])
-const showCard = ref(false)
-const selectedCardVisible = refDebounced(showCard, 100)
+const cardsRef = ref<any[]>([])
 const zoomLevel = computed(() => {
   const viewportSize = Math.min(windowWidth.value, windowHeight.value - 64)
   return viewportSize > 740 ? 2 : Math.max(1, viewportSize / 370)
@@ -165,9 +146,8 @@ onMounted(async () => {
     username.value = 'yolo'
     pin.value = '2077'
     await nextTick()
-    await waitFor(() => cards.value.length > 0, 50)
-    selectedCard.value = cards.value.at(autofill.value)
-    showCard.value = true
+    await waitFor(() => cardsRef.value.length > 0, 50)
+    cardsRef.value.at(autofill.value - 1).toggleOpen()
   }
 })
 </script>
@@ -186,7 +166,6 @@ onMounted(async () => {
   gap: 12px
 
   padding: 12px
-  max-width: 100vw
   overflow-x: auto
 
 .settings-card

@@ -13,8 +13,9 @@ v-app.bg-surface-container
       target='_blank' href='https://jsek.work/'
       v-tooltip:bottom='"Open developer website"'
     )
-    v-btn.ml-auto.bg-surface-dim.my-n3(
-      rounded='lg' size='small'
+    .ml-auto.mr-3.text-body-2.opacity-40 {{ version }}
+    v-btn.my-n3(
+      variant='text' rounded='lg' size='small' color='grey'
       :icon='mdiThemeLightDark'
       @click='toggleTheme'
       v-tooltip:bottom='"Toggle theme"'
@@ -25,4 +26,5 @@ v-app.bg-surface-container
 <script setup lang="ts">
 import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
 const { isDark, toggleTheme } = useAppTheme()
+const version = 'v1.0.0'
 </script>

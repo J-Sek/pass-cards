@@ -1,29 +1,34 @@
 <template lang="pug">
-v-card.pa-6.pass-card(
-  :width='cardSize * 30 - 4 + 48'
-  v-bind='$attrs'
-)
-  .card-characters
-    v-chip(
-      v-for='(ch, i) in characters'
-      :key='i'
-      :variant='cellVariants[isHighlighted(i) ? 1 : 0]'
-      :color='ch.color'
-      :ripple='!preview'
-      @click='highlightRow(i)'
-      @dblclick='highlightColumn(i)'
-    ) {{ preview ? '·' : ch.value }}
-    // ◉ | ▣ | ⬢
-  .card-number {{ footer }}
+card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
+  v-card.pa-6.pass-card(
+    :border='isOpen'
+    :ripple='false'
+    v-bind='!isOpen ? { onClick: toggleOpen } : {}'
+  )
+    .card-characters
+      v-chip(
+        v-for='(ch, i) in characters'
+        :key='i'
+        :variant='cellVariants[isHighlighted(i) ? 1 : 0]'
+        :color='ch.color'
+        :ripple='isOpen'
+        v-bind='isOpen ? { onClick: () => highlightRow(i), onDblclick: () => highlightColumn(i) } : {}'
+      ) {{ !isOpen ? '·' : ch.value }}
+      // ◉ | ▣ | ⬢
+    .card-number {{ footer }}
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
   chipVariant: 'text' | 'tonal' | 'flat' | 'outlined'
+  zoomLevel: number
   footer: string
-  preview?: boolean
   characters: TSign[]
 }>()
+
+const isOpen = ref(false)
+const toggleOpen = () => isOpen.value = true
+defineExpose({ toggleOpen, isOpen })
 
 const cardSize = 10
 
@@ -38,8 +43,8 @@ const highlightedCells = reactive(highlightMap(cardSize ** 2))
 const hasAnyHighlights = computed(() => Object.values(highlightedCells).some(Boolean))
 
 const cellVariants = computed<any[]>(() => [
-  hasAnyHighlights.value ? 'text' : props.chipVariant,
-  props.chipVariant === 'text' ? 'tonal' : props.chipVariant,
+  isOpen.value && hasAnyHighlights.value ? 'text' : props.chipVariant,
+  isOpen.value && props.chipVariant === 'text' ? 'tonal' : props.chipVariant,
 ])
 
 function getCoordinates(cellIndex: number) {
@@ -50,14 +55,14 @@ function getCoordinates(cellIndex: number) {
 }
 
 function highlightRow(cellIndex: number) {
-  if (props.preview) return
+  if (!isOpen.value) return
   const { row } = getCoordinates(cellIndex)
   highlightedRows[row] = !highlightedRows[row]
   props.characters.forEach((_, i) => highlightedCells[i] = isHighlighted(i))
 }
 
 function highlightColumn(cellIndex: number) {
-  if (props.preview) return
+  if (!isOpen.value) return
   const { column } = getCoordinates(cellIndex)
   highlightedColumns[column] = !highlightedColumns[column]
   props.characters.forEach((_, i) => highlightedCells[i] = isHighlighted(i))

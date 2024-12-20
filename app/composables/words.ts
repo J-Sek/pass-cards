@@ -6,7 +6,7 @@ export function useWords() {
     if (wordsArray.value.length > 0) return
     cancelIdleCallback(idleCallbackId)
     const response = await $fetch<string>('/words.txt', { headers: { 'content-type': 'plain/text' } })
-    wordsArray.value = response.split('\n')
+    wordsArray.value = response.split(/\r?\n/)
   }
 
   onMounted(() => {
