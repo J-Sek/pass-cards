@@ -25,10 +25,6 @@ $default-font: 'Kanit', sans-serif;
   margin-top: 64px;
 }
 
-:root {
-  --v-overlay-opacity: .5;
-}
-
 .v-app-bar {
   -webkit-app-region: drag;
   z-index: 9999 !important;

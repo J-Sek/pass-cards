@@ -1,5 +1,6 @@
 @use 'vuetify/settings' with (
   $button-text-transform: none,
   $otp-input-content-height: 56px,
-  $dialog-margin: 12px
+  $overlay-opacity: .5,
+  $overlay-scrim-background: #000
 );
