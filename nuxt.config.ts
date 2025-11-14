@@ -2,10 +2,9 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 const appTitle = 'Pass Cards'
 const appDescription = 'Security utility to help me remember master passwords'
-const targetDomain = process.env.BASE_URL
+const targetDomain = import.meta.env.BASE_URL
 
 export default defineNuxtConfig({
-  future: { compatibilityVersion: 4 },
   devtools: { enabled: false },
   sourcemap: false,
   ssr: false,
@@ -37,15 +36,6 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
-        // @ts-expect-error typical Vuetify config
-        config.plugins.push(vuetify({
-          autoImport: { labs: true },
-          styles: { configFile: './assets/settings.scss' },
-        }));
-      });
-    },
     '@pinia/nuxt',
     '@vueuse/nuxt',
     'unplugin-fonts/nuxt',
@@ -129,6 +119,12 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+    plugins: [
+      vuetify({
+        autoImport: { labs: true },
+        styles: { configFile: './assets/settings.scss' },
+      }),
+    ],
   },
 
   $development: {

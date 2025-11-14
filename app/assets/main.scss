@@ -5,16 +5,13 @@ $default-font: 'Kanit', sans-serif;
   $body-font-family: $default-font,
 );
 
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-  background-color: transparent;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8888 transparent;
 }
 
-::-webkit-scrollbar-thumb {
-  border-radius: 7px;
-  background-color: rgb(var(--v-theme-scroll));
-  -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+.v-main__scroller {
+  scrollbar-gutter: stable;
 }
 
 .v-dialog.v-overlay--active {
