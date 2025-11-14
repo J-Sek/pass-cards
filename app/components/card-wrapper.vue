@@ -7,6 +7,7 @@ div
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { TransitionPresets } from '@vueuse/core'
 import { useMotionProperties, useMotionTransitions } from '@vueuse/motion'
 
 function delay(seconds: number) {
@@ -32,7 +33,7 @@ const wrapperClasses = computed(() => ({
 
 const { motionProperties: transform } = useMotionProperties(self, { x: 0, y: 0 })
 const { push, stop } = useMotionTransitions()
-const transition = { type: 'keyframes', ease: 'easeInOut', duration: 300 }
+const transition = { type: 'keyframes', ease: TransitionPresets.easeOutCubic, duration: 250 }
 let isAnimating = false
 
 const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -58,7 +59,7 @@ watchDebounced(open, async (v) => {
     push('y', openY, transform, { from: y, ...transition })
     push('scale', props.zoomLevel, transform, { from: 1, ...transition })
     push('padding', 8, transform, { from: 0, ...transition })
-    await delay(.6)
+    await delay(.4)
     stop()
   } else {
     isClosing.value = true
@@ -66,7 +67,7 @@ watchDebounced(open, async (v) => {
     push('y', y, transform, { from: openY, ...transition })
     push('scale', 1, transform, { from: props.zoomLevel, ...transition })
     push('padding', 0, transform, { from: 1, ...transition })
-    await delay(.6)
+    await delay(.4)
     stop()
     isClosing.value = false
     isFixed.value = false
@@ -95,7 +96,7 @@ watch(() => windowWidth.value + windowHeight.value, async () => {
   + .backdrop {
     position: fixed;
     inset: 0;
-    z-index: 9998;
+    z-index: 998;
     backdrop-filter: blur(4px);
     background-color: #0006;
     opacity: 0;
@@ -106,7 +107,7 @@ watch(() => windowWidth.value + windowHeight.value, async () => {
   &.open {
     position: fixed;
     max-height: calc(100dvh - 80px);
-    z-index: 9999;
+    z-index: 999;
 
     &:not(.closing) {
       overflow: auto;
