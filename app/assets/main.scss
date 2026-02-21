@@ -1,9 +1,6 @@
-$default-font: 'Kanit', sans-serif;
-
-@use 'vuetify' with (
-  $heading-font-family: $default-font,
-  $body-font-family: $default-font,
-);
+:root {
+  --font-base: 'Kanit', sans-serif;
+}
 
 * {
   scrollbar-width: thin;

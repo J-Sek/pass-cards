@@ -2,27 +2,25 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "bun: restore",
+            "label": "bun: build",
             "type": "shell",
-            "command": "bun i --frozen-lockfile",
-            "problemMatcher": []
-        },
-        {
-            "label": "bun: test",
-            "type": "bun",
-            "script": "test",
-            "problemMatcher": []
+            "command": "bun run build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "label": "bun: dev",
-            "type": "bun",
-            "script": "dev",
+            "type": "shell",
+            "command": "bun dev",
             "problemMatcher": []
         },
         {
             "label": "nuxt: prepare",
-            "type": "bun",
-            "script": "postinstall",
+            "type": "shell",
+            "command": "bun postinstall",
             "problemMatcher": []
         }
     ]
