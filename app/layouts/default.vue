@@ -6,14 +6,14 @@ v-app.bg-surface-container
         v-avatar(image='/images/icon.svg' size='32')
         .ml-3 #[b(:style='{ color: isDark ? "#e1b847" : "" }') Pass Cards]
   v-footer.border-t.pr-2(app)
-    .d-flex.align-center &copy; 2024 #[v-divider.mx-3.my-1(vertical opacity='.7')] J_SEK Solutions
+    .d-flex.align-center.text-body-medium &copy; {{ year }} #[v-divider.mx-3.my-1(vertical opacity='.7')] J_SEK Solutions
     v-btn.ml-2.my-n3.opacity-60(
       variant='text' rounded='lg' size='small' color='primary'
       :icon='mdiCardAccountDetailsOutline'
       target='_blank' href='https://jsek.work/'
       v-tooltip:top='"Open developer website"'
     )
-    .ml-auto.mr-3.text-body-2.opacity-40 {{ $config.public.version }}
+    .ml-auto.mr-3.text-body-medium.opacity-60 {{ $config.public.version }}
     theme-config-menu(location='top end' offset='8' viewport-margin='4')
       template(#activator='{ props }')
         v-btn.my-n3(
@@ -28,4 +28,5 @@ v-app.bg-surface-container
 <script setup lang="ts">
 import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
 const { isDark } = useAppThemeStore()
+const year = new Date().getFullYear()
 </script>
