@@ -87,20 +87,26 @@ const seed = computed(() => {
   return hashCode(username.value + String(pin.value))
 })
 
-const separators = computed<TSign[]>(() => '+------|······'.split('').map(v => ({ value: v, color: 'info' })))
+function getColor(baseColor: string, rotateHue?: number) {
+  return rotateHue
+    ? `oklch(from rgb(var(--v-theme-${baseColor})) l c calc(mod(h + ${rotateHue * 360}, 360)))`
+    : `rgb(var(--v-theme-${baseColor}))`
+}
+
+const separators = computed<TSign[]>(() => '+------|······'.split('').map(v => ({ value: v, color: getColor('primary', .8) })))
 const allCharacters = computed<TSign[]>(() => [
   [
     'abcdefghijklmnopqrstuvwxyz',
     'abcdefghijklmnopqrstuvwxyz'.toUpperCase(),
-  ].join('').split('').map(v => ({ value: v, color: 'primary' })),
+  ].join('').split('').map(v => ({ value: v, color: getColor('primary') })),
 
-  '1234567890'.split('').map(v => ({ value: v, color: 'secondary' })),
-  '!?@#$%&'.split('').map(v => ({ value: v, color: 'success' })),
+  '1234567890'.split('').map(v => ({ value: v, color: getColor('primary', .2) })),
+  '!?@#$%&'.split('').map(v => ({ value: v, color: getColor('primary', .4) })),
   separators.value,
   [
     '€§↓',  // ALT +         5|7|U
     '¡¿↑',  // ALT + SHIFT + 1|2|U
-  ].join('').split('').map(v => ({ value: v, color: 'error' })),
+  ].join('').split('').map(v => ({ value: v, color: getColor('primary', 6) })),
 ].flatMap(x => x))
 
 const isLoadingCards = ref(false)
@@ -125,7 +131,7 @@ async function computeCards() {
         index: ci,
         characters: [
           ...r.nextWord().split('')
-            .map((v) => ({ value: v, color: 'primary' })),
+            .map((v) => ({ value: v, color: getColor('primary') })),
           r.nextElement(separators.value),
           ...Array.from({ length: cardSize ** 2 - 8 })
             .map((_, chi) => r.nextElement(allCharacters.value)),

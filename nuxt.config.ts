@@ -49,6 +49,12 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
+  runtimeConfig: {
+    public: {
+      version: 'v1.1.0',
+    },
+  },
+
   unfonts: {
     fontsource: {
       families: [

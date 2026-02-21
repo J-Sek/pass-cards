@@ -2,3 +2,7 @@
 nuxt-layout
   nuxt-page
 </template>
+
+<script setup>
+useAppThemeSync()
+</script>

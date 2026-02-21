@@ -3,10 +3,9 @@ import '../assets/main.scss';
 import { createVuetify } from 'vuetify';
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 
-
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: 'light',
+    defaultTheme: 'system',
     themes: {
       light: {
         dark: false,
@@ -16,10 +15,6 @@ const vuetify = createVuetify({
           'on-surface': '#3f357a',
           primary: '#8330f7',
           'on-primary': '#fffeff',
-          secondary: '#df9100',
-          'on-secondary': '#ffffff',
-          error: '#ba1a1a',
-          'on-error': '#ffffff',
         },
         variables: {},
       },
@@ -31,10 +26,6 @@ const vuetify = createVuetify({
           'on-surface': '#e3e6fc',
           primary: '#dfd5ff',
           'on-primary': '#6019be',
-          secondary: '#fff588',
-          'on-secondary': '#985008',
-          error: '#ffb4ab',
-          'on-error': '#690005',
         },
         variables: {},
       },
@@ -46,6 +37,9 @@ const vuetify = createVuetify({
     sets: { mdi },
   },
   defaults: {
+    global: {
+      ripple: false,
+    },
     VSelect: {
       variant: 'outlined',
       hideDetails: 'auto',
@@ -59,12 +53,8 @@ const vuetify = createVuetify({
     VOtpInput: {
       variant: 'outlined',
       hideDetails: 'auto',
+      density: 'compact',
       style: 'padding: 0'
-    },
-    VBtn: {
-      rounded: 'pill',
-      variant: 'flat',
-      color: 'secondary',
     },
     VChip: {
       label: true,

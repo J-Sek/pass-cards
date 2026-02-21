@@ -11,20 +11,21 @@ v-app.bg-surface-container
       variant='text' rounded='lg' size='small' color='primary'
       :icon='mdiCardAccountDetailsOutline'
       target='_blank' href='https://jsek.work/'
-      v-tooltip:bottom='"Open developer website"'
+      v-tooltip:top='"Open developer website"'
     )
-    .ml-auto.mr-3.text-body-2.opacity-40 {{ version }}
-    v-btn.my-n3(
-      variant='text' rounded='lg' size='small' color='grey'
-      :icon='mdiThemeLightDark'
-      @click='toggleTheme'
-      v-tooltip:bottom='"Toggle theme"'
-    )
+    .ml-auto.mr-3.text-body-2.opacity-40 {{ $config.public.version }}
+    theme-config-menu(location='top end' offset='8' viewport-margin='4')
+      template(#activator='{ props }')
+        v-btn.my-n3(
+          variant='text' rounded='lg' size='small' color='grey'
+          :icon='mdiThemeLightDark'
+          v-bind='props'
+          v-tooltip:top='"Configure theme"'
+        )
   slot
 </template>
 
 <script setup lang="ts">
 import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
-const { isDark, toggleTheme } = useAppTheme()
-const version = 'v1.1.0'
+const { isDark } = useAppThemeStore()
 </script>

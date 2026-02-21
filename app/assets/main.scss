@@ -30,4 +30,8 @@
   .v-footer {
     z-index: 997 !important;
   }
+
+  .v-btn:not(.v-tab):active {
+    scale: .97;
+  }
 }

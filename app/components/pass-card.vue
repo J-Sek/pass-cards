@@ -9,8 +9,9 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
         v-for='(ch, i) in characters'
         :key='i'
         :variant='cellVariants[isHighlighted(i) ? 1 : 0]'
-        :color='ch.color'
+        :style='`--c: ${ch.color || "initial"}`'
         :ripple='isOpen'
+        rounded="lg"
         v-bind='isOpen ? { onClick: () => highlightRow(i), onDblclick: () => highlightColumn(i) } : {}'
       ) {{ !isOpen ? '·' : ch.value }}
       // ◉ | ▣ | ⬢
@@ -85,6 +86,11 @@ function isHighlighted(cellIndex: number): boolean {
     padding: 0
     justify-content: center
     width: calc(var(--v-chip-height) + 0px)
+    color: var(--c)
+
+    &.v-chip--variant-flat
+      background-color: var(--c)
+      color: color(from var(--c) xyz-d65 clamp(0, (.36 / y - 1) * infinity, 1) clamp(0, (.36 / y - 1) * infinity, 1) clamp(0, (.36 / y - 1) * infinity, 1))
 
 .card-number
   opacity: .2
