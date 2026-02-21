@@ -5,15 +5,15 @@ v-main(scrollable)
       v-card.py-1.px-2.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
         .settings-card__content
           .d-flex.align-center
-            .text-body-2(style='width: 50px') Rows:
+            .text-body-medium(style='width: 50px') Rows:
             v-chip-group(v-model='setRows')
               v-chip(v-for='v in setRowsOptions' :key='v' :value='v') {{ v }}
           .d-flex.align-center.mt-n1
-            .text-body-2(style='width: 50px') Style:
+            .text-body-medium(style='width: 50px') Style:
             v-chip-group.text-uppercase(v-model='chipVariant')
               v-chip(v-for='v in chipVariants' :key='v' :value='v') {{ v }}
           .d-flex.align-center.mt-n1
-            .text-body-2(style='width: 50px') Font:
+            .text-body-medium(style='width: 50px') Font:
             v-chip-group.text-uppercase(v-model='fontFamily')
               v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v') {{ v }}
       v-card.pa-6.mx-3(width='350' style='z-index: 1')

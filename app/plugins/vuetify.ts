@@ -64,9 +64,6 @@ const vuetify = createVuetify({
       elevation: 2,
       rounded: 'lg',
     },
-    VCardTitle: {
-      class: 'text-h5',
-    },
   },
 })
 
