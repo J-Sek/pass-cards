@@ -2,28 +2,32 @@
   --font-base: 'Kanit', sans-serif;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #8888 transparent;
+@layer vuetify-core {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #8888 transparent;
+  }
 }
 
-.v-main__scroller {
-  scrollbar-gutter: stable;
-}
+@layer vuetify-overrides {
+  .v-main__scroller {
+    scrollbar-gutter: stable;
+  }
 
-.v-dialog.v-overlay--active {
-  backdrop-filter: blur(5px);
-}
+  .v-dialog.v-overlay--active {
+    backdrop-filter: blur(5px);
+  }
 
-.v-dialog .v-overlay__content:has(.pass-card) {
-  margin-top: 64px;
-}
+  .v-dialog .v-overlay__content:has(.pass-card) {
+    margin-top: 64px;
+  }
 
-.v-app-bar {
-  -webkit-app-region: drag;
-  z-index: 9999 !important;
-}
+  .v-app-bar {
+    -webkit-app-region: drag;
+    z-index: 9999 !important;
+  }
 
-.v-footer {
-  z-index: 997 !important;
+  .v-footer {
+    z-index: 997 !important;
+  }
 }

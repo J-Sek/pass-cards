@@ -26,5 +26,5 @@ v-app.bg-surface-container
 <script setup lang="ts">
 import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
 const { isDark, toggleTheme } = useAppTheme()
-const version = 'v1.0.0'
+const version = 'v1.1.0'
 </script>

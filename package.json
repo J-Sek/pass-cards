@@ -2,7 +2,7 @@
   "name": "pass-cards",
   "private": true,
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --port 4000",
@@ -20,7 +20,7 @@
     "pinia": "3.0.4",
     "unplugin-fonts": "1.4.0",
     "vue": "3.5.24",
-    "vuetify": "3.12.0",
+    "vuetify": "4.0.0-beta.2",
     "workbox-core": "^7.3.0",
     "workbox-precaching": "^7.3.0",
     "workbox-routing": "^7.3.0"
