@@ -50,6 +50,7 @@ export default defineNuxtConfig({
     '~/assets/layers.scss',
     'vuetify/styles',
     '~/assets/tailwind.css',
+    '~/assets/main.css',
   ],
 
   build: {

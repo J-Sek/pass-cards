@@ -19,7 +19,6 @@ const props = defineProps<{ zoomLevel: number }>()
 const self = ref<HTMLElement>(null!)
 const offsetTop = 64
 const footerHeight = 42
-const padding = 8
 
 const open = defineModel<boolean>('open', { default: false })
 
@@ -40,7 +39,7 @@ const { width: windowWidth, height: windowHeight } = useWindowSize()
 
 function getOpenCoordinates() {
   const { width } = self.value.parentElement!.getBoundingClientRect()
-  const cardOuterSize = (2 * padding + width) * props.zoomLevel
+  const cardOuterSize = width * props.zoomLevel
   return {
     x: (windowWidth.value - cardOuterSize) / 2,
     y: offsetTop + Math.max(8, (windowHeight.value - (offsetTop + footerHeight) - cardOuterSize) / 2),
@@ -58,7 +57,6 @@ watchDebounced(open, async (v) => {
     push('x', openX, transform, { from: x, ...transition })
     push('y', openY, transform, { from: y, ...transition })
     push('scale', props.zoomLevel, transform, { from: 1, ...transition })
-    push('padding', 8, transform, { from: 0, ...transition })
     await delay(.4)
     stop()
   } else {
@@ -66,7 +64,6 @@ watchDebounced(open, async (v) => {
     push('x', x, transform, { from: openX, ...transition })
     push('y', y, transform, { from: openY, ...transition })
     push('scale', 1, transform, { from: props.zoomLevel, ...transition })
-    push('padding', 0, transform, { from: 1, ...transition })
     await delay(.4)
     stop()
     isClosing.value = false
@@ -85,7 +82,7 @@ watch(() => windowWidth.value + windowHeight.value, async () => {
 })
 </script>
 
-<style scoped>
+<style>
 .card-page {
   position: relative;
   display: block;
@@ -110,7 +107,11 @@ watch(() => windowWidth.value + windowHeight.value, async () => {
     z-index: 999;
 
     &:not(.closing) {
-      overflow: auto;
+      > .v-card {
+        overflow: auto;
+        min-height: 150px;
+        max-height: calc(100dvh - 78px);
+      }
 
       + .backdrop {
         pointer-events: all;

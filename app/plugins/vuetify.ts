@@ -59,7 +59,6 @@ const vuetify = createVuetify({
       size: 'small',
     },
     VCard: {
-      elevation: 2,
       rounded: 'lg',
     },
   },

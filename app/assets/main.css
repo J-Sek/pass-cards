@@ -1,3 +1,5 @@
+@reference './tailwind.css';
+
 @layer vuetify-core {
   * {
     scrollbar-width: thin;
@@ -29,5 +31,13 @@
 
   .v-btn:not(.v-tab):active {
     scale: .97;
+  }
+
+  .v-app-bar.v-toolbar:not(.v-toolbar--flat) {
+    @apply shadow-md;
+  }
+
+  .v-card--variant-elevated {
+    @apply shadow-md;
   }
 }

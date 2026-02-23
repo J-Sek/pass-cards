@@ -29,3 +29,17 @@
 @source inline('rounded-3xl');
 @source inline('rounded-4xl');
 @source inline('rounded-full');
+
+@utility elevation-0 { @apply shadow-none }
+@utility elevation-1 { @apply shadow-xs }
+@utility elevation-2 { @apply shadow-sm }
+@utility elevation-3 { @apply shadow-md }
+@utility elevation-4 { @apply shadow-xl }
+@utility elevation-5 { @apply shadow-2xl }
+
+@source inline('elevation-0');
+@source inline('elevation-1');
+@source inline('elevation-2');
+@source inline('elevation-3');
+@source inline('elevation-4');
+@source inline('elevation-5');

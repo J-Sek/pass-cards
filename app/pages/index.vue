@@ -7,15 +7,15 @@ v-main(scrollable)
           .flex.items-center
             .text-sm(style='width: 50px') Rows:
             v-chip-group(v-model='setRows')
-              v-chip(v-for='v in setRowsOptions' :key='v' :value='v') {{ v }}
+              v-chip(v-for='v in setRowsOptions' :key='v' :value='v' :text='v')
           .flex.items-center(class='-mt-1')
             .text-sm(style='width: 50px') Style:
             v-chip-group.uppercase(v-model='chipVariant')
-              v-chip(v-for='v in chipVariants' :key='v' :value='v') {{ v }}
+              v-chip(v-for='v in chipVariants' :key='v' :value='v' :text='v')
           .flex.items-center(class='-mt-1')
             .text-sm(style='width: 50px') Font:
             v-chip-group.uppercase(v-model='fontFamily')
-              v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v') {{ v }}
+              v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v' :text='v')
       v-card.p-6.mx-3(width='350' style='z-index: 1')
         .flex(class='-mb-3')
           v-form
@@ -32,7 +32,7 @@ v-main(scrollable)
 
   .flex.items-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
-    .cards-grid.py-6(
+    .cards-grid(
       v-else-if='cards.length'
       :class='fontClass'
     )
@@ -158,7 +158,9 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
+@reference '../assets/tailwind.css'
+
 .font-0
   --code-font-family: 'Azeret Mono'
   --code-font-weight: 400
@@ -171,7 +173,7 @@ onMounted(async () => {
   grid-template-columns: repeat(v-bind(setColumns), 1fr)
   gap: 12px
 
-  padding: 12px
+  padding: 32px
   overflow-x: auto
 
 .settings-card

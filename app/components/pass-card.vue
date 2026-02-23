@@ -3,6 +3,7 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
   v-card.p-6.pass-card(
     :ripple='false'
     v-bind='!isOpen ? { onClick: toggleOpen } : {}'
+    :elevation='isOpen ? 4 : 2'
   )
     .card-characters
       v-chip(
