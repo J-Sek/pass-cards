@@ -113,12 +113,8 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          api: 'modern',
-        },
-      },
+    build: {
+      cssMinify: 'lightningcss',
     },
     vue: {
       template: {
