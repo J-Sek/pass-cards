@@ -1,6 +1,6 @@
 <template lang="pug">
 card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
-  v-card.pa-6.pass-card(
+  v-card.p-6.pass-card(
     :ripple='false'
     v-bind='!isOpen ? { onClick: toggleOpen } : {}'
   )

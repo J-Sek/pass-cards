@@ -1,28 +1,28 @@
 <template lang="pug">
 v-main(scrollable)
-  .d-flex.align-center.justify-center.pt-6
-    .d-flex.align-center.position-relative
+  .flex.items-center.justify-center.pt-6
+    .flex.items-center.relative
       v-card.py-1.px-2.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
         .settings-card__content
-          .d-flex.align-center
-            .text-body-medium(style='width: 50px') Rows:
+          .flex.items-center
+            .text-sm(style='width: 50px') Rows:
             v-chip-group(v-model='setRows')
               v-chip(v-for='v in setRowsOptions' :key='v' :value='v') {{ v }}
-          .d-flex.align-center.mt-n1
-            .text-body-medium(style='width: 50px') Style:
-            v-chip-group.text-uppercase(v-model='chipVariant')
+          .flex.items-center(class='-mt-1')
+            .text-sm(style='width: 50px') Style:
+            v-chip-group.uppercase(v-model='chipVariant')
               v-chip(v-for='v in chipVariants' :key='v' :value='v') {{ v }}
-          .d-flex.align-center.mt-n1
-            .text-body-medium(style='width: 50px') Font:
-            v-chip-group.text-uppercase(v-model='fontFamily')
+          .flex.items-center(class='-mt-1')
+            .text-sm(style='width: 50px') Font:
+            v-chip-group.uppercase(v-model='fontFamily')
               v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v') {{ v }}
-      v-card.pa-6.mx-3(width='350' style='z-index: 1')
-        .d-flex.mb-n3
+      v-card.p-6.mx-3(width='350' style='z-index: 1')
+        .flex(class='-mb-3')
           v-form
             v-text-field(prefix='Username:' persistent-placeholder v-model='username')
-            v-otp-input.mx-n2(:length='pinLength' persistent-placeholder type='text' v-model='pin')
+            v-otp-input(class='-mx-2' :length='pinLength' persistent-placeholder type='text' v-model='pin')
           v-divider.ml-3.mr-1(vertical)
-          .d-flex.flex-column.ga-2.mr-n4
+          .flex.flex-col.gap-2(class='-mr-4')
             v-btn(
               size='small' variant='text'
               :icon='showSettings ? (windowWidth > 1200 ? mdiArrowLeft : mdiArrowUp) : mdiCogOutline'
@@ -30,7 +30,7 @@ v-main(scrollable)
             )
             v-btn(size='small' variant='text' :icon='mdiRestore' @click='pin = ""')
 
-  .d-flex.align-center.justify-center
+  .flex.items-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
     .cards-grid.py-6(
       v-else-if='cards.length'

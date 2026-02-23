@@ -3,8 +3,8 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
   template(#activator='{ props }')
     slot(name='activator' v-bind='{ props }')
 
-  v-card.pa-6(rounded='lg' min-width='220')
-    .text-body-small.text-medium-emphasis.mb-2 Mode
+  v-card.p-6(rounded='lg' min-width='220')
+    .text-xs.text-medium-emphasis.mb-2 Mode
     v-tabs.mb-6(
       v-model='themeMode'
       mandatory
@@ -18,8 +18,8 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
       v-tab(rounded="lg" value='system' size='small' :prepend-icon='mdiThemeLightDark' text='System')
       v-tab(rounded="lg" value='dark' size='small' :prepend-icon='mdiWeatherNight' text='Dark')
 
-    .text-body-small.text-medium-emphasis.mb-2 Primary color
-    .d-flex.ga-2.flex-wrap.mb-6
+    .text-xs.text-medium-emphasis.mb-2 Primary color
+    .flex.gap-2.flex-wrap.mb-6
       button.swatch(
         v-for='p in primaryOptions'
         :key='p.id'
@@ -30,8 +30,8 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
         v-tooltip:top='p.label'
       )
 
-    .text-body-small.text-medium-emphasis.mb-2 Surface tint
-    .d-flex.ga-2.flex-wrap.mb-3
+    .text-xs.text-medium-emphasis.mb-2 Surface tint
+    .flex.gap-2.flex-wrap.mb-3
       button.swatch(
         v-for='s in surfaceOptions'
         :key='s.id'
@@ -51,19 +51,15 @@ const { isDark, themeMode, primaryColor, surfaceColor } = useAppThemeStore()
 </script>
 
 <style scoped>
+@reference "../assets/tailwind.css";
+
 .swatch {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(128, 128, 128, 0.25);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.15s;
+  @apply size-[26px] rounded-full shrink-0;
+  @apply border-[1.5px] border-gray-500/25;
+  @apply active:scale-[.97];
 }
-.swatch:active {
-  scale: .97;
-}
-.swatch.active {
+
+.active {
   outline: 2px solid rgb(var(--v-theme-on-surface));
   outline-offset: 2px;
 }

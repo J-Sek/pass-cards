@@ -1,5 +1,22 @@
 @use 'vuetify/settings' with (
   $body-font-family: var(--font-base),
+  $utilities: false,
+  $color-pack: false,
+  $grid-breakpoints: (
+    // repeated in vuetify.ts and tailwind.css
+    'xs': 0,
+    'sm': 600px,
+    'md': 840px,
+    'lg': 1145px,
+    'xl': 1545px,
+    'xxl': 2138px,
+  ),
+  $container-max-widths: (
+    'md': 700px,
+    'lg': 1000px,
+    'xl': 1400px,
+    'xxl': 2000px,
+  ),
   $overlay-opacity: .5,
   $overlay-scrim-background: #000
 );

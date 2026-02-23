@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 const appTitle = 'Pass Cards'
@@ -44,6 +45,12 @@ export default defineNuxtConfig({
   ],
 
   components: [{ path: 'components', pathPrefix: false, extensions: ['vue'] }],
+
+  css: [
+    '~/assets/layers.scss',
+    'vuetify/styles',
+    '~/assets/tailwind.css',
+  ],
 
   build: {
     transpile: ['vuetify'],
@@ -122,6 +129,9 @@ export default defineNuxtConfig({
       },
     },
     plugins: [
+      // @ts-ignore
+      tailwindcss(),
+      // @ts-ignore
       vuetify({
         autoImport: { labs: true },
         styles: { configFile: './assets/settings.scss' },

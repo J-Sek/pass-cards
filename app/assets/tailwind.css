@@ -1,0 +1,31 @@
+@import "tailwindcss/theme.css" layer(tailwind.theme);
+@import "tailwindcss/utilities.css" layer(tailwind.utilities);
+
+@custom-variant light (&:where(.v-theme--light, .v-theme--light *));
+@custom-variant dark (&:where(.v-theme--dark, .v-theme--dark *));
+
+@theme {
+  --font-base: 'Kanit', sans-serif;
+
+  --breakpoint-*: initial;
+  /* repeated vuetify.ts and settings.scss */
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 840px;
+  --breakpoint-lg: 1145px;
+  --breakpoint-xl: 1545px;
+  --breakpoint-xxl: 2138px;
+}
+
+@source inline('font-base');
+
+@source inline('rounded-none');
+@source inline('rounded-sm');
+@source inline('rounded'); /* .25rem */
+@source inline('rounded-md');
+@source inline('rounded-lg');
+@source inline('rounded-xl');
+@source inline('rounded-2xl');
+@source inline('rounded-3xl');
+@source inline('rounded-4xl');
+@source inline('rounded-full');

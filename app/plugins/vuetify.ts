@@ -1,5 +1,3 @@
-import 'vuetify/styles';
-import '../assets/main.scss';
 import { createVuetify } from 'vuetify';
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 
@@ -65,6 +63,17 @@ const vuetify = createVuetify({
       rounded: 'lg',
     },
   },
+  display: {
+    mobileBreakpoint: 'md',
+    thresholds: {
+      xs: 0,
+      sm: 600,
+      md: 840,
+      lg: 1145,
+      xl: 1545,
+      xxl: 2138,
+    },
+  }
 })
 
 export default defineNuxtPlugin((app) => {
