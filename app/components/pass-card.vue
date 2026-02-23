@@ -75,7 +75,7 @@ function isHighlighted(cellIndex: number): boolean {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .card-characters
   display: grid
   grid-template-columns: repeat(v-bind(cardSize), 1fr)

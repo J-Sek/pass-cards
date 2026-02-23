@@ -25,7 +25,7 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
         :key='p.id'
         :aria-label='`Select ${p.label}`'
         :style='{ background: isDark ? p.dark : p.light }'
-        :class='{ active: primaryColor === p.id }'
+        :class='{ "swatch--active": primaryColor === p.id }'
         @click='primaryColor = p.id'
         v-tooltip:top='p.label'
       )
@@ -37,7 +37,7 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
         :key='s.id'
         :aria-label='`Select ${s.label} tint`'
         :style='{ background: `color-mix(in srgb, ${isDark ? s.darkSurface : s.lightSurface}, rgb(var(--v-theme-on-surface)) 30%)` }'
-        :class='{ active: surfaceColor === s.id }'
+        :class='{ "swatch--active": surfaceColor === s.id }'
         @click='surfaceColor = s.id'
         v-tooltip:top='s.label'
       )
@@ -50,7 +50,7 @@ import { primaryOptions, surfaceOptions } from '~/composables/theme'
 const { isDark, themeMode, primaryColor, surfaceColor } = useAppThemeStore()
 </script>
 
-<style scoped>
+<style>
 @reference "../assets/tailwind.css";
 
 .swatch {
@@ -59,7 +59,7 @@ const { isDark, themeMode, primaryColor, surfaceColor } = useAppThemeStore()
   @apply active:scale-[.97];
 }
 
-.active {
+.swatch--active {
   outline: 2px solid rgb(var(--v-theme-on-surface));
   outline-offset: 2px;
 }
