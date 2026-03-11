@@ -3,6 +3,8 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
   v-card.p-6.pass-card(
     :ripple='false'
     v-bind='!isOpen ? { onClick: toggleOpen } : {}'
+    class='elevation-overlay'
+    :data-open='isOpen'
     :elevation='isOpen ? 4 : 2'
   )
     .card-characters
@@ -10,6 +12,7 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
         v-for='(ch, i) in characters'
         :key='i'
         :variant='cellVariants[isHighlighted(i) ? 1 : 0]'
+        :active='isHighlighted(i)'
         :style='`--c: ${ch.color || "initial"}`'
         :ripple='isOpen'
         rounded="lg"
@@ -92,6 +95,11 @@ function isHighlighted(cellIndex: number): boolean {
     &.v-chip--variant-flat
       background-color: var(--c)
       color: color(from var(--c) xyz-d65 clamp(0, (.36 / y - 1) * infinity, 1) clamp(0, (.36 / y - 1) * infinity, 1) clamp(0, (.36 / y - 1) * infinity, 1))
+
+.pass-card[data-open='true']
+  .card-characters:has(> .v-chip[active="true"])
+    > .v-chip:not([active="true"])
+      opacity: .5
 
 .card-number
   opacity: .2
