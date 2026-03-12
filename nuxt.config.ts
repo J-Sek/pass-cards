@@ -1,5 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
+import { presetIcons } from 'unocss'
 
 const appTitle = 'Pass Cards'
 const appDescription = 'Security utility to help me remember master passwords'
@@ -42,6 +43,7 @@ export default defineNuxtConfig({
     'unplugin-fonts/nuxt',
     '@vite-pwa/nuxt',
     '@nuxtjs/plausible',
+    '@unocss/nuxt',
   ],
 
   components: [{ path: 'components', pathPrefix: false, extensions: ['vue'] }],
@@ -71,6 +73,12 @@ export default defineNuxtConfig({
         { name: 'Kanit', weights: [400, 500, 700], subset: 'latin' },
       ],
     },
+  },
+
+  unocss: {
+    presets: [
+      presetIcons(),
+    ],
   },
 
   pwa: {

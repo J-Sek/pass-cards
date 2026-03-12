@@ -8,7 +8,7 @@ v-app.bg-surface-container
   v-footer.border-t.pr-2(app)
     .flex.items-center.text-sm &copy; {{ year }} #[v-divider.mx-3.my-1(vertical opacity='.7')] J_SEK Solutions
     v-btn(
-      :icon='mdiCardAccountDetailsOutline'
+      icon='i-solar:user-id-linear'
       v-tooltip:top='"Open developer website"'
       class='ml-2 -my-3 opacity-60 text-primary'
       href='https://jsek.work/'
@@ -23,7 +23,7 @@ v-app.bg-surface-container
         v-btn(
           v-bind='props'
           v-tooltip:top='"Configure theme"'
-          :icon='mdiThemeLightDark'
+          icon='i-solar:palette-linear'
           class='-my-3 text-grey-500'
           rounded='lg'
           size='small'
@@ -33,7 +33,6 @@ v-app.bg-surface-container
 </template>
 
 <script setup lang="ts">
-import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
 const { isDark } = useAppThemeStore()
 const year = new Date().getFullYear()
 </script>

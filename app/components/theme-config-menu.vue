@@ -14,9 +14,9 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
       rounded='lg'
       inset
     )
-      v-tab(rounded="lg" value='light' size='small' :prepend-icon='mdiWeatherSunny' text='Light')
-      v-tab(rounded="lg" value='system' size='small' :prepend-icon='mdiThemeLightDark' text='System')
-      v-tab(rounded="lg" value='dark' size='small' :prepend-icon='mdiWeatherNight' text='Dark')
+      v-tab(rounded="lg" value='light' size='small' prepend-icon='i-solar:sun-2-linear' text='Light')
+      v-tab(rounded="lg" value='system' size='small' prepend-icon='i-solar:monitor-linear' text='System')
+      v-tab(rounded="lg" value='dark' size='small' prepend-icon='i-solar:moon-linear' text='Dark')
 
     .text-xs.text-medium-emphasis.mb-2 Primary color
     .flex.gap-2.flex-wrap.mb-6
@@ -44,7 +44,6 @@ v-menu(:close-on-content-click='false' capture-focus retain-focus)
 </template>
 
 <script setup lang="ts">
-import { mdiThemeLightDark, mdiWeatherSunny, mdiWeatherNight } from '@mdi/js'
 import { primaryOptions, surfaceOptions } from '~/composables/theme'
 
 const { isDark, themeMode, primaryColor, surfaceColor } = useAppThemeStore()

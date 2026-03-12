@@ -1,5 +1,5 @@
 import { createVuetify } from 'vuetify';
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
+import { aliases, solar } from '../theme/solar-icons';
 
 const vuetify = createVuetify({
   theme: {
@@ -30,9 +30,9 @@ const vuetify = createVuetify({
     },
   },
   icons: {
-    defaultSet: 'mdi',
+    defaultSet: 'solar',
     aliases,
-    sets: { mdi },
+    sets: { solar },
   },
   defaults: {
     global: {

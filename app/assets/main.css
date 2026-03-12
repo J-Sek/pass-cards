@@ -40,4 +40,9 @@
   .v-card--variant-elevated {
     @apply shadow-md;
   }
+
+  .i-solar\:alt-arrow-left-linear,
+  .i-solar\:alt-arrow-right-linear {
+    scale: .7;
+  }
 }

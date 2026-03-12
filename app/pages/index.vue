@@ -16,7 +16,7 @@ v-main(scrollable)
             .text-sm(style='width: 50px') Font:
             v-chip-group.uppercase(v-model='fontFamily')
               v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v' :text='v')
-      v-card.p-6.mx-3(width='350' style='z-index: 1')
+      v-card.p-6.mx-3(width='360' style='z-index: 1')
         .flex(class='-mb-3')
           v-form
             v-text-field(prefix='Username:' persistent-placeholder v-model='username')
@@ -25,10 +25,10 @@ v-main(scrollable)
           .flex.flex-col.gap-2(class='-mr-4')
             v-btn(
               size='small' variant='text'
-              :icon='showSettings ? (windowWidth > 1200 ? mdiArrowLeft : mdiArrowUp) : mdiCogOutline'
+              :icon='showSettings ? (windowWidth > 1200 ? "i-solar:arrow-left-linear" : "i-solar:arrow-up-linear") : "i-solar:settings-linear"'
               @click='showSettings = !showSettings'
             )
-            v-btn(size='small' variant='text' :icon='mdiRestore' @click='pin = ""')
+            v-btn(size='small' variant='text' icon='i-solar:restart-linear' @click='pin = ""')
 
   .flex.items-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
@@ -51,7 +51,6 @@ v-main(scrollable)
 </template>
 
 <script setup lang="ts">
-import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
 import { useWords } from '~/composables/words';
 import { waitFor } from '~/utils/timing';
 
@@ -159,7 +158,7 @@ onMounted(async () => {
 </script>
 
 <style lang="sass">
-@reference '../assets/tailwind.css'
+// @reference '../assets/tailwind.css'
 
 .font-0
   --code-font-family: 'Azeret Mono'
@@ -178,7 +177,7 @@ onMounted(async () => {
 
 .settings-card
   position: absolute
-  width: 332px
+  width: 342px
   z-index: 0
   top: 2px
   left: 20px
