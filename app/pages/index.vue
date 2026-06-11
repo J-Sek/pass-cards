@@ -109,7 +109,7 @@ const setColumns = 3
 const cardSize = 10
 
 const seed = computed(() => {
-  if (!username.value?.length || pin.value?.length != pinLength)
+  if (!username.value?.length || graphemeLength(pin.value) != pinLength)
     return 0
   return hashCode(username.value + String(pin.value))
 })
