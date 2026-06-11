@@ -9,12 +9,14 @@ v-main(scrollable)
             v-otp-input(class='-mx-2' :length='pinLength' persistent-placeholder type='text' v-model='pin')
           v-divider.ml-3.mr-1(vertical)
           .flex.flex-col.gap-2(class='-mr-4')
-            v-btn(
-              size='small' variant='text'
-              :icon='showSettings ? (windowWidth > 1200 ? mdiArrowLeft : mdiArrowUp) : mdiCogOutline'
-              @click='showSettings = !showSettings'
-            )
-            v-btn(size='small' variant='text' :icon='mdiRestore' @click='pin = ""')
+            v-btn(size='small' variant='text' icon @click='showSettings = !showSettings')
+              transition(name='swap-scale')
+                v-icon(:key='settingsIcon' :icon='settingsIcon')
+            v-btn(size='small' variant='text' icon @click='restore')
+              v-icon.restore-icon(
+                :icon='mdiRestore'
+                :style='{ transform: `rotate(${restoreSpin}deg)` }'
+              )
       v-card.py-1.px-2.settings-card(
         variant='outlined'
         :class='{ "settings-card--visible": showSettings }'
@@ -78,6 +80,15 @@ const pin = ref('')
 const pinLength = 4
 
 const showSettings = ref(false)
+const settingsIcon = computed(() =>
+  showSettings.value ? (windowWidth.value > 1200 ? mdiArrowLeft : mdiArrowUp) : mdiCogOutline)
+
+const restoreSpin = ref(0)
+function restore() {
+  pin.value = ''
+  restoreSpin.value -= 360
+}
+
 const cardsRef = ref<any[]>([])
 const zoomLevel = computed(() => {
   const viewportSize = Math.min(windowWidth.value, windowHeight.value - 64)
@@ -234,6 +245,23 @@ onMounted(async () => {
 .font-1
   --code-font-family: 'Red Hat Mono'
   --code-font-weight: 500
+
+// Settings toggle: scale-swap between cog and arrow icons (à la Ark UI Swap)
+.swap-scale-enter-active,
+.swap-scale-leave-active
+  transition: transform .25s ease, opacity .25s ease
+// Overlap leave + enter so the icons cross at ~50% scale instead of
+// fully collapsing and re-growing.
+.swap-scale-leave-active
+  position: absolute
+.swap-scale-enter-from,
+.swap-scale-leave-to
+  transform: scale(0)
+  opacity: 0
+
+// Restore: full 360° spin on each click
+.restore-icon
+  transition: transform .5s ease
 
 .cards-grid
   display: grid
