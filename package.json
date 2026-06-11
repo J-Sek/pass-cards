@@ -14,7 +14,6 @@
     "@vite-pwa/nuxt": "1.1.1",
     "@vuetify/v0": "^1.0.0-beta.1",
     "@vueuse/core": "14.2.1",
-    "@vueuse/motion": "3.0.3",
     "@vueuse/nuxt": "14.2.1",
     "@vueuse/router": "14.2.1",
     "lightningcss": "1.32.0",

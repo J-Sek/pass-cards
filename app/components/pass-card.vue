@@ -36,7 +36,8 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
 </template>
 
 <script setup lang="ts">
-import { useVirtualFocus } from '@vuetify/v0'
+import { createGroup, useVirtualFocus } from '@vuetify/v0'
+import { range } from '@vuetify/v0/utilities'
 import { useFocusTrap } from 'vuetify/lib/composables/focusTrap.js'
 
 const props = defineProps<{
@@ -161,15 +162,12 @@ watch(isOpen, async (opened) => {
   gridRef.value?.focus({ preventScroll: true })
 })
 
-const highlightMap = (length: number) => Array.from({ length })
-  .map((_, i) => i)
-  .reduce((o, n) => ({ ...o, [n]: false }), {} as Record<number, boolean>)
+const rows = createGroup()
+const cols = createGroup()
+rows.onboard(range(cardSize).map(id => ({ id })))
+cols.onboard(range(cardSize).map(id => ({ id })))
 
-const highlightedRows = reactive(highlightMap(cardSize))
-const highlightedColumns = reactive(highlightMap(cardSize))
-
-const highlightedCells = reactive(highlightMap(cardSize ** 2))
-const hasAnyHighlights = computed(() => Object.values(highlightedCells).some(Boolean))
+const hasAnyHighlights = computed(() => !rows.isNoneSelected.value || !cols.isNoneSelected.value)
 
 const cellVariants = computed<any[]>(() => [
   isOpen.value && hasAnyHighlights.value ? 'text' : props.chipVariant,
@@ -185,21 +183,17 @@ function getCoordinates(cellIndex: number) {
 
 function highlightRow(cellIndex: number) {
   if (!isOpen.value) return
-  const { row } = getCoordinates(cellIndex)
-  highlightedRows[row] = !highlightedRows[row]
-  props.characters.forEach((_, i) => highlightedCells[i] = isHighlighted(i))
+  rows.toggle(getCoordinates(cellIndex).row)
 }
 
 function highlightColumn(cellIndex: number) {
   if (!isOpen.value) return
-  const { column } = getCoordinates(cellIndex)
-  highlightedColumns[column] = !highlightedColumns[column]
-  props.characters.forEach((_, i) => highlightedCells[i] = isHighlighted(i))
+  cols.toggle(getCoordinates(cellIndex).column)
 }
 
 function isHighlighted(cellIndex: number): boolean {
   const { row, column } = getCoordinates(cellIndex)
-  return highlightedRows[row] || highlightedColumns[column] || false
+  return rows.selectedIds.has(row) || cols.selectedIds.has(column)
 }
 </script>
 

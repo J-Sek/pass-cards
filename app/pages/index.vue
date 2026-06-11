@@ -68,6 +68,7 @@ v-main(scrollable)
 <script setup lang="ts">
 import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
 import { useVirtualFocus } from '@vuetify/v0'
+import { clamp, range } from '@vuetify/v0/utilities'
 import { useWords } from '~/composables/words';
 import { waitFor } from '~/utils/timing';
 
@@ -90,7 +91,7 @@ function restore() {
 const cardsRef = ref<any[]>([])
 const zoomLevel = computed(() => {
   const viewportSize = Math.min(windowWidth.value, windowHeight.value - 64)
-  return viewportSize > 740 ? 2 : Math.max(1, viewportSize / 370)
+  return clamp(viewportSize / 370, 1, 2)
 })
 
 const setRowsOptions = [1, 2, 3, 4]
@@ -200,15 +201,15 @@ async function computeCards() {
     r.setWords(wordsArray.value)
     await delay(150)
     // TODO: push to background worker
-    cards.value = Array.from({ length: setColumns * setRows.value })
-      .map((_, ci) => ({
+    cards.value = range(setColumns * setRows.value)
+      .map((ci) => ({
         index: ci,
         characters: [
           ...r.nextWord().split('')
             .map((v) => ({ value: v, color: getColor('primary') })),
           r.nextElement(separators.value),
-          ...Array.from({ length: cardSize ** 2 - 8 })
-            .map((_, chi) => r.nextElement(allCharacters.value)),
+          ...range(cardSize ** 2 - 8)
+            .map(() => r.nextElement(allCharacters.value)),
         ],
       }))
     await delay(150)
