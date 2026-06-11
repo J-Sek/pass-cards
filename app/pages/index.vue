@@ -43,9 +43,8 @@ v-main(scrollable)
       ref='gridRef'
       role='grid'
       tabindex='0'
-      :class='[fontClass, { navigating: openCount === 0 }]'
+      :class='fontClass'
       @focus='onGridFocus'
-      @blur='onGridBlur'
       @keydown.enter.prevent='openHighlighted'
       @keydown.space.prevent='openHighlighted'
     )
@@ -62,7 +61,6 @@ v-main(scrollable)
           :footer='`${card.index + 1} / ${cards.length}`'
           :ripple='false'
           ref='cardsRef'
-          @opened='onCardOpened(card.index)'
           @closed='onCardClosed'
         )
 </template>
@@ -140,10 +138,8 @@ const isLoadingCards = ref(false)
 
 const cards = shallowRef<TCard[]>([])
 
-// Keyboard navigation across the grid of closed cards via aria-activedescendant.
-// The grid is the single tab stop; arrows move a virtual cursor between cards,
-// Enter/Space opens the highlighted card. Focus moves inside on open and returns
-// here on close, so DOM focus and the virtual cursor never diverge.
+// Keyboard navigation across the closed cards: the grid is the single tab stop,
+// arrows move a virtual cursor (aria-activedescendant), Enter/Space opens it.
 const gridUid = useId()
 const cardCellId = (i: number) => `${gridUid}-card-${i}`
 
@@ -153,8 +149,6 @@ const setCardEl = (i: number) => (el: any) => {
   cardEls[i] = (el ?? undefined) as HTMLElement | undefined
 }
 
-const openCount = ref(0)
-
 const { highlightedId, highlight, clear } = useVirtualFocus(
   () => cards.value.map(c => ({ id: c.index, el: () => cardEls[c.index] })),
   {
@@ -163,17 +157,20 @@ const { highlightedId, highlight, clear } = useVirtualFocus(
   },
 )
 
+// Track input modality so a mouse open/close doesn't scroll a card into view:
+// we only highlight (which scrolls) for keyboard. Ring is gated by :focus-visible.
+const keyboardActive = ref(false)
+const NAV_KEYS = ['Tab', 'Enter', ' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Escape']
+useEventListener('keydown', (e: KeyboardEvent) => {
+  if (NAV_KEYS.includes(e.key)) keyboardActive.value = true
+})
+useEventListener('pointerdown', () => { keyboardActive.value = false })
+
 function onGridFocus() {
-  if (highlightedId.value == null && cards.value.length) {
+  // Only for keyboard focus, so a pointer focus triggers neither scroll nor ring.
+  if (keyboardActive.value && highlightedId.value == null && cards.value.length) {
     highlight(cards.value[0]!.index)
   }
-}
-
-function onGridBlur() {
-  // Don't lie about focus: once the grid loses it (Tab away, click elsewhere),
-  // drop the cursor ring. While a card is open the highlight is intentionally
-  // kept so focus can return to it on close.
-  if (openCount.value === 0) clear()
 }
 
 function openHighlighted() {
@@ -181,14 +178,11 @@ function openHighlighted() {
   cardsRef.value[Number(highlightedId.value)]?.open()
 }
 
-function onCardOpened(index: number) {
-  highlight(index)
-  openCount.value++
-}
-
 function onCardClosed() {
-  openCount.value = Math.max(0, openCount.value - 1)
-  nextTick(() => gridRef.value?.focus())
+  // Always reclaim focus, else it stays stranded on the closed card's cells and
+  // the next arrow navigates inside it. preventScroll + :focus-visible keep a
+  // mouse close from scrolling to or ringing the card.
+  nextTick(() => gridRef.value?.focus({ preventScroll: true }))
 }
 
 watch(cards, () => clear())
@@ -274,9 +268,9 @@ onMounted(async () => {
   &:focus
     outline: none
 
-  // Virtual-focus cursor for navigating between closed cards. Hidden while a
-  // card is open (.navigating is removed) so it doesn't ring the empty slot.
-  &.navigating .v-card-outter[data-highlighted]
+  // :focus-visible limits the cursor ring to keyboard focus (no ring on a mouse
+  // open/close), and focus leaving the grid hides it while a card is open.
+  &:focus-visible .v-card-outter[data-highlighted]
     outline: 2px solid rgb(var(--v-theme-primary))
     outline-offset: 4px
     border-radius: 16px

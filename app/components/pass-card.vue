@@ -46,7 +46,7 @@ const props = defineProps<{
   characters: TSign[]
 }>()
 
-const emit = defineEmits<{ opened: []; closed: [] }>()
+const emit = defineEmits<{ closed: [] }>()
 
 const isOpen = ref(false)
 const open = () => isOpen.value = true
@@ -56,8 +56,8 @@ defineExpose({ open, close, toggleOpen, isOpen })
 
 const cardSize = 10
 
-// Keyboard navigation within the card grid via aria-activedescendant.
-// The grid keeps DOM focus while a virtual cursor moves between cells.
+// Keyboard navigation within the grid; DOM focus stays on the grid while a
+// virtual cursor (aria-activedescendant) moves between cells.
 const uid = useId()
 const cellId = (i: number) => `${uid}-cell-${i}`
 
@@ -75,12 +75,11 @@ const { highlightedId, highlight, clear } = useVirtualFocus(
   },
 )
 
-// The arrow-cursor ring is only shown while navigating by keyboard. A mouse
-// click hides it (and repositions the cursor) so we never show two outlines.
+// Ring shows only during keyboard nav; a click hides it (see onChipClick).
 const cursorVisible = ref(false)
 
-// Trap Tab focus inside the open card. The grid is the only tabbable child, so
-// Tab / Shift+Tab just cycle back to it instead of escaping to the page.
+// Trap Tab inside the open card — the grid is the only tabbable child, so Tab
+// just cycles back to it instead of escaping to the page.
 const cardRef = ref<any>()
 const contentEl = computed(() => cardRef.value?.$el as HTMLElement | undefined)
 useFocusTrap(
@@ -88,9 +87,8 @@ useFocusTrap(
   { isActive: isOpen, localTop: computed(() => isOpen.value), contentEl },
 )
 
-// Single tap highlights the row, a quick second tap on the same cell highlights
-// the column instead. Debounced so a double tap never flashes the row first —
-// the row is only committed once the tap settles. Shared by click and Enter.
+// Single tap highlights the row, a quick second tap the column. Debounced so a
+// double tap never flashes the row first. Shared by click and Enter.
 const TAP_DELAY = 250
 let tapTimer: ReturnType<typeof setTimeout> | null = null
 let tapCellIndex = -1
@@ -116,8 +114,8 @@ function tapCell (i: number) {
 }
 
 function onChipClick (i: number) {
-  // Mouse mode: hide the keyboard cursor ring and move the cursor to the clicked
-  // cell so arrows resume from here. Keep DOM focus on the grid, not the chip.
+  // Hide the ring, move the cursor to the clicked cell so arrows resume here,
+  // and keep DOM focus on the grid (not the chip).
   cursorVisible.value = false
   highlight(i)
   gridRef.value?.focus({ preventScroll: true })
@@ -132,13 +130,12 @@ function onInnerKeydown (e: KeyboardEvent) {
     case 'ArrowRight':
     case 'Home':
     case 'End':
-      // Movement is handled by useVirtualFocus' own listener; here we just reveal
-      // the cursor and stop the key from also driving the outer card grid.
+      // Movement is handled by useVirtualFocus; just reveal the cursor and keep
+      // the key from also driving the outer card grid. (Tab is left to the trap.)
       cursorVisible.value = true
       e.stopPropagation()
       break
     case 'Enter':
-      // Let Tab fall through to the focus trap; everything else stays local.
       e.preventDefault()
       e.stopPropagation()
       cursorVisible.value = true
@@ -160,9 +157,8 @@ watch(isOpen, async (opened) => {
     emit('closed')
     return
   }
-  emit('opened')
   await nextTick()
-  gridRef.value?.focus()
+  gridRef.value?.focus({ preventScroll: true })
 })
 
 const highlightMap = (length: number) => Array.from({ length })
