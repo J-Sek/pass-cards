@@ -2,20 +2,6 @@
 v-main(scrollable)
   .flex.items-center.justify-center.pt-6
     .flex.items-center.relative
-      v-card.py-1.px-2.settings-card(variant='outlined' :class='{ "settings-card--visible": showSettings }')
-        .settings-card__content
-          .flex.items-center
-            .text-sm(style='width: 50px') Rows:
-            v-chip-group(v-model='setRows')
-              v-chip(v-for='v in setRowsOptions' :key='v' :value='v' :text='v')
-          .flex.items-center(class='-mt-1')
-            .text-sm(style='width: 50px') Style:
-            v-chip-group.uppercase(v-model='chipVariant')
-              v-chip(v-for='v in chipVariants' :key='v' :value='v' :text='v')
-          .flex.items-center(class='-mt-1')
-            .text-sm(style='width: 50px') Font:
-            v-chip-group.uppercase(v-model='fontFamily')
-              v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v' :text='v')
       v-card.p-6.mx-3(width='360' style='z-index: 1')
         .flex(class='-mb-3')
           v-form
@@ -29,15 +15,42 @@ v-main(scrollable)
               @click='showSettings = !showSettings'
             )
             v-btn(size='small' variant='text' :icon='mdiRestore' @click='pin = ""')
+      v-card.py-1.px-2.settings-card(
+        variant='outlined'
+        :class='{ "settings-card--visible": showSettings }'
+        :inert='!showSettings'
+      )
+        .settings-card__content
+          .flex.items-center
+            .text-sm(style='width: 50px') Rows:
+            v-chip-group(v-model='setRows')
+              v-chip(v-for='v in setRowsOptions' :key='v' :value='v' :text='v')
+          .flex.items-center(class='-mt-1')
+            .text-sm(style='width: 50px') Style:
+            v-chip-group.uppercase(v-model='chipVariant')
+              v-chip(v-for='v in chipVariants' :key='v' :value='v' :text='v')
+          .flex.items-center(class='-mt-1')
+            .text-sm(style='width: 50px') Font:
+            v-chip-group.uppercase(v-model='fontFamily')
+              v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v' :text='v')
 
   .flex.items-center.justify-center
     v-progress-circular.mx-auto.mt-16(v-if='isLoadingCards' size='80' width='3' indeterminate)
     .cards-grid(
       v-else-if='cards.length'
-      :class='fontClass'
+      ref='gridRef'
+      role='grid'
+      tabindex='0'
+      :class='[fontClass, { navigating: openCount === 0 }]'
+      @focus='onGridFocus'
+      @blur='onGridBlur'
+      @keydown.enter.prevent='openHighlighted'
+      @keydown.space.prevent='openHighlighted'
     )
       .v-card-outter(
         v-for='card in cards' :key='card.index'
+        :id='cardCellId(card.index)'
+        :ref='setCardEl(card.index)'
         :style='{ width: `${cardSize * 30 - 4 + 48}px` }'
       )
         pass-card(
@@ -47,11 +60,14 @@ v-main(scrollable)
           :footer='`${card.index + 1} / ${cards.length}`'
           :ripple='false'
           ref='cardsRef'
+          @opened='onCardOpened(card.index)'
+          @closed='onCardClosed'
         )
 </template>
 
 <script setup lang="ts">
 import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
+import { useVirtualFocus } from '@vuetify/v0'
 import { useWords } from '~/composables/words';
 import { waitFor } from '~/utils/timing';
 
@@ -112,6 +128,59 @@ const allCharacters = computed<TSign[]>(() => [
 const isLoadingCards = ref(false)
 
 const cards = shallowRef<TCard[]>([])
+
+// Keyboard navigation across the grid of closed cards via aria-activedescendant.
+// The grid is the single tab stop; arrows move a virtual cursor between cards,
+// Enter/Space opens the highlighted card. Focus moves inside on open and returns
+// here on close, so DOM focus and the virtual cursor never diverge.
+const gridUid = useId()
+const cardCellId = (i: number) => `${gridUid}-card-${i}`
+
+const gridRef = ref<HTMLElement>()
+const cardEls = reactive<Record<number, HTMLElement | undefined>>({})
+const setCardEl = (i: number) => (el: any) => {
+  cardEls[i] = (el ?? undefined) as HTMLElement | undefined
+}
+
+const openCount = ref(0)
+
+const { highlightedId, highlight, clear } = useVirtualFocus(
+  () => cards.value.map(c => ({ id: c.index, el: () => cardEls[c.index] })),
+  {
+    control: gridRef,
+    columns: setColumns,
+  },
+)
+
+function onGridFocus() {
+  if (highlightedId.value == null && cards.value.length) {
+    highlight(cards.value[0]!.index)
+  }
+}
+
+function onGridBlur() {
+  // Don't lie about focus: once the grid loses it (Tab away, click elsewhere),
+  // drop the cursor ring. While a card is open the highlight is intentionally
+  // kept so focus can return to it on close.
+  if (openCount.value === 0) clear()
+}
+
+function openHighlighted() {
+  if (highlightedId.value == null) return
+  cardsRef.value[Number(highlightedId.value)]?.open()
+}
+
+function onCardOpened(index: number) {
+  highlight(index)
+  openCount.value++
+}
+
+function onCardClosed() {
+  openCount.value = Math.max(0, openCount.value - 1)
+  nextTick(() => gridRef.value?.focus())
+}
+
+watch(cards, () => clear())
 
 const { loadWords, wordsArray } = useWords()
 
@@ -174,6 +243,16 @@ onMounted(async () => {
   padding: 32px
   overflow-x: auto
 
+  &:focus
+    outline: none
+
+  // Virtual-focus cursor for navigating between closed cards. Hidden while a
+  // card is open (.navigating is removed) so it doesn't ring the empty slot.
+  &.navigating .v-card-outter[data-highlighted]
+    outline: 2px solid rgb(var(--v-theme-primary))
+    outline-offset: 4px
+    border-radius: 16px
+
 .settings-card
   position: absolute
   width: 342px
@@ -192,16 +271,10 @@ onMounted(async () => {
     .settings-card__content
       padding-top: 8px
 
-    + .v-card
-      margin-bottom: 130px
-
   .settings-card__content
     padding-left: 8px
     padding-bottom: 2px
     transition: padding-top .3s ease-in-out
-
-  + .v-card
-    transition: margin-bottom .3s ease-in-out
 
   @media (min-width: 1200px)
     left: 12px
@@ -217,11 +290,19 @@ onMounted(async () => {
       .settings-card__content
         padding-top: 0
 
-      + .v-card
-        margin-bottom: 0
-
     .settings-card__content
       padding-left: 12px
       padding-top: 0
       padding-bottom: 0
+
+// The form card precedes .settings-card in the DOM (so Tab flows form → settings),
+// so reach back to it with :has() instead of the old `.settings-card + .v-card`.
+.v-card:has(+ .settings-card)
+  transition: margin-bottom .3s ease-in-out
+
+.v-card:has(+ .settings-card--visible)
+  margin-bottom: 130px
+
+  @media (min-width: 1200px)
+    margin-bottom: 0
 </style>
