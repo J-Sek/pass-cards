@@ -16,7 +16,7 @@ v-main(scrollable)
             .text-sm(style='width: 50px') Font:
             v-chip-group.uppercase(v-model='fontFamily')
               v-chip(v-for='v in fontFamilyOptions' :key='v' :value='v' :text='v')
-      v-card.p-6.mx-3(width='350' style='z-index: 1')
+      v-card.p-6.mx-3(width='360' style='z-index: 1')
         .flex(class='-mb-3')
           v-form
             v-text-field(prefix='Username:' persistent-placeholder v-model='username')
@@ -159,8 +159,6 @@ onMounted(async () => {
 </script>
 
 <style lang="sass">
-@reference '../assets/tailwind.css'
-
 .font-0
   --code-font-family: 'Azeret Mono'
   --code-font-weight: 400
@@ -178,7 +176,7 @@ onMounted(async () => {
 
 .settings-card
   position: absolute
-  width: 332px
+  width: 342px
   z-index: 0
   top: 2px
   left: 20px
@@ -214,7 +212,7 @@ onMounted(async () => {
 
     &.settings-card--visible
       --card-shift-y: 0%
-      --card-shift-x: 340px
+      --card-shift-x: 350px
 
       .settings-card__content
         padding-top: 0

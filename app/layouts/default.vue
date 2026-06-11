@@ -10,7 +10,7 @@ v-app.bg-surface-container
     v-btn(
       :icon='mdiCardAccountDetailsOutline'
       v-tooltip:top='"Open developer website"'
-      class='ml-2 -my-3 opacity-60 text-primary'
+      class='ml-2 -my-2 h-8 opacity-60 text-primary'
       href='https://jsek.work/'
       rounded='lg'
       size='small'
@@ -23,8 +23,8 @@ v-app.bg-surface-container
         v-btn(
           v-bind='props'
           v-tooltip:top='"Configure theme"'
-          :icon='mdiThemeLightDark'
-          class='-my-3 text-grey-500'
+          :icon='mdiPaletteOutline'
+          class='-my-2 h-8 text-grey-500'
           rounded='lg'
           size='small'
           variant='text'
@@ -33,7 +33,7 @@ v-app.bg-surface-container
 </template>
 
 <script setup lang="ts">
-import { mdiCardAccountDetailsOutline, mdiThemeLightDark } from '@mdi/js'
+import { mdiCardAccountDetailsOutline, mdiPaletteOutline } from '@mdi/js'
 const { isDark } = useAppThemeStore()
 const year = new Date().getFullYear()
 </script>
