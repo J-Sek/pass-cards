@@ -123,6 +123,12 @@ export default defineNuxtConfig({
   vite: {
     build: {
       cssMinify: 'lightningcss',
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'SOURCEMAP_BROKEN') return
+          warn(warning)
+        },
+      },
     },
     vue: {
       template: {
