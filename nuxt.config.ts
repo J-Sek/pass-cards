@@ -27,6 +27,7 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#211b3d' },
       ],
       link: [
+        { rel: 'stylesheet', href: '/layers.css' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'apple-touch-icon', href: '/images/pwa/icon-192.png' },
         { rel: 'icon', type: 'image/svg+xml', href: '/images/icon.svg' },
@@ -47,7 +48,6 @@ export default defineNuxtConfig({
   components: [{ path: 'components', pathPrefix: false, extensions: ['vue'] }],
 
   css: [
-    '~/assets/layers.scss',
     'vuetify/styles',
     '~/assets/tailwind.css',
     '~/assets/main.css',

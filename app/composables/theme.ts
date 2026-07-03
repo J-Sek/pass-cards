@@ -42,7 +42,6 @@ export function useAppThemeStore() {
 }
 
 export function useAppThemeSync() {
-  const motion = usePreferredReducedMotion()
   const { change, themes } = useTheme()
   const { forceDark, themeMode, primaryColor, surfaceColor } = useAppThemeStore()
 
@@ -74,26 +73,7 @@ export function useAppThemeSync() {
 
   watch(primaryColor, applyPrimary, { immediate: true })
   watch(surfaceColor, applySurface, { immediate: true })
-  watch(themeMode, (v) => withTransition(() => change(v)))
+  watch(themeMode, (v) => change(v, { origin: '99% 100%' }))
 
   change(forceDark.value ? 'dark' : themeMode.value)
-
-  async function withTransition(apply: () => void) {
-    if (!document.startViewTransition || motion.value === 'reduce') {
-      apply()
-      return
-    }
-    const style = document.createElement('style')
-    style.id = 'theme-transition'
-    style.textContent =
-      `::view-transition-old(root) { animation: none; }` +
-      `::view-transition-new(root) { animation: theme-circle 300ms ease-out; }` +
-      `@keyframes theme-circle {` +
-      `  from { clip-path: circle(0% at 99% 100%); }` +
-      `  to { clip-path: circle(150% at 99% 100%); }` +
-      `}`
-    document.head.appendChild(style)
-    await document.startViewTransition(apply).finished
-    style.remove()
-  }
 }
