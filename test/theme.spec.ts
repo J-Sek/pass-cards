@@ -5,8 +5,6 @@ import ThemeConfigMenu from '~/components/theme-config-menu.vue'
 import { useAppThemeSync } from '~/composables/theme'
 import { fillCredentials, mountApp, userEvent, waitForCards } from './support'
 
-// app.vue runs useAppThemeSync(); the layout renders the theme menu. This harness
-// mirrors that: sync the theme, show the page and a menu with a plain activator.
 const ThemeHarness = defineComponent({
   setup() {
     useAppThemeSync()
@@ -32,11 +30,9 @@ describe('theme', () => {
   it('applies mode, primary colour and surface tint from the theme menu', async () => {
     const { el } = mountApp(ThemeHarness)
 
-    // Typical usage: enter credentials so the app is in its normal state.
     await fillCredentials(el, 'yolo', '2077')
     await waitForCards(el, 3)
 
-    // Starts in the system (light) theme.
     expect(el.classList.contains('v-theme--light')).toBe(true)
 
     await userEvent.click(el.querySelector('#theme-btn')!)
@@ -44,7 +40,6 @@ describe('theme', () => {
       if (!document.querySelector('.v-overlay__content .v-tab')) throw new Error('menu not open')
     })
 
-    // Mode -> Dark.
     const darkTab = [...menu().querySelectorAll<HTMLElement>('.v-tab')]
       .find(t => t.textContent!.includes('Dark'))!
     await userEvent.click(darkTab)
@@ -53,7 +48,6 @@ describe('theme', () => {
     })
     expect(localStorage.getItem('theme:mode')).toBe('dark')
 
-    // Primary colour -> Blue (dark shade #93c5fd = 147,197,253).
     await userEvent.click(menu().querySelector('[aria-label="Select Blue"]')!)
     await vi.waitFor(() => {
       if (cssVar(el, '--v-theme-primary') !== '147,197,253') {
@@ -62,7 +56,6 @@ describe('theme', () => {
     })
     expect(localStorage.getItem('theme:colors:primary')).toBe('blue')
 
-    // Surface tint -> Teal (dark surface #061c1a = 6,28,26).
     await userEvent.click(menu().querySelector('[aria-label="Select Teal tint"]')!)
     await vi.waitFor(() => {
       if (cssVar(el, '--v-theme-surface') !== '6,28,26') {

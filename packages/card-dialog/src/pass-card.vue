@@ -31,14 +31,17 @@ card-wrapper(v-model:open='isOpen' :zoom-level='zoomLevel')
         @mousedown.prevent
         v-bind='isOpen ? { onClick: () => onChipClick(i) } : {}'
       ) {{ !isOpen ? '·' : ch.value }}
-      // ◉ | ▣ | ⬢
     .card-number {{ footer }}
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, reactive, ref, useId, watch } from 'vue'
+import { VCard, VChip } from 'vuetify/components'
 import { createGroup, useVirtualFocus } from '@vuetify/v0'
 import { range } from '@vuetify/v0/utilities'
 import { useFocusTrap } from 'vuetify/lib/composables/focusTrap.js'
+import CardWrapper from './card-wrapper.vue'
+import type { TSign } from './types'
 
 const props = defineProps<{
   chipVariant: 'text' | 'tonal' | 'flat' | 'outlined'
@@ -57,8 +60,6 @@ defineExpose({ open, close, toggleOpen, isOpen })
 
 const cardSize = 10
 
-// Keyboard navigation within the grid; DOM focus stays on the grid while a
-// virtual cursor (aria-activedescendant) moves between cells.
 const uid = useId()
 const cellId = (i: number) => `${uid}-cell-${i}`
 
@@ -76,11 +77,8 @@ const { highlightedId, highlight, clear } = useVirtualFocus(
   },
 )
 
-// Ring shows only during keyboard nav; a click hides it (see onChipClick).
 const cursorVisible = ref(false)
 
-// Trap Tab inside the open card — the grid is the only tabbable child, so Tab
-// just cycles back to it instead of escaping to the page.
 const cardRef = ref<any>()
 const contentEl = computed(() => cardRef.value?.$el as HTMLElement | undefined)
 useFocusTrap(
@@ -88,8 +86,6 @@ useFocusTrap(
   { isActive: isOpen, localTop: computed(() => isOpen.value), contentEl },
 )
 
-// Single tap highlights the row, a quick second tap the column. Debounced so a
-// double tap never flashes the row first. Shared by click and Enter.
 const TAP_DELAY = 250
 let tapTimer: ReturnType<typeof setTimeout> | null = null
 let tapCellIndex = -1
@@ -103,7 +99,6 @@ function tapCell (i: number) {
       highlightColumn(i)
       return
     }
-    // A pending tap on a different cell resolves to its row before this one.
     highlightRow(tapCellIndex)
   }
   tapCellIndex = i
@@ -115,8 +110,6 @@ function tapCell (i: number) {
 }
 
 function onChipClick (i: number) {
-  // Hide the ring, move the cursor to the clicked cell so arrows resume here,
-  // and keep DOM focus on the grid (not the chip).
   cursorVisible.value = false
   highlight(i)
   gridRef.value?.focus({ preventScroll: true })
@@ -131,8 +124,6 @@ function onInnerKeydown (e: KeyboardEvent) {
     case 'ArrowRight':
     case 'Home':
     case 'End':
-      // Movement is handled by useVirtualFocus; just reveal the cursor and keep
-      // the key from also driving the outer card grid. (Tab is left to the trap.)
       cursorVisible.value = true
       e.stopPropagation()
       break

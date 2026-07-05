@@ -15,7 +15,7 @@ logs
 *.log
 
 # Test artifacts (browser-mode failure screenshots / attachments)
-test/__screenshots__
+__screenshots__
 .vitest-attachments
 
 # Misc

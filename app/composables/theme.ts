@@ -2,7 +2,6 @@ import { useTheme } from 'vuetify'
 
 export type ThemeMode = 'light' | 'system' | 'dark'
 
-// Primary colors: shade 600 for light mode, shade 300 for dark mode (Tailwind CSS)
 export const primaryOptions = [
   { id: 'violet',  label: 'Violet',  light: '#7c3aed', dark: '#c4b5fd', onLight: '#ffffff', onDark: '#4c1d95' },
   { id: 'blue',    label: 'Blue',    light: '#2563eb', dark: '#93c5fd', onLight: '#ffffff', onDark: '#1e3a8a' },
@@ -12,7 +11,6 @@ export const primaryOptions = [
   { id: 'amber',   label: 'Amber',   light: '#d97706', dark: '#fcd34d', onLight: '#ffffff', onDark: '#78350f' },
 ]
 
-// Surface colors: shade 50/100 for light mode, custom dark tints for dark mode (Tailwind CSS)
 export const surfaceOptions = [
   { id: 'slate',  label: 'Slate',  lightSurface: '#f8fafc', darkSurface: '#0f172a', lightBg: '#f1f5f9', darkBg: '#1e293b' },
   { id: 'zinc',   label: 'Zinc',   lightSurface: '#fafafa', darkSurface: '#18181b', lightBg: '#f4f4f5', darkBg: '#27272a' },

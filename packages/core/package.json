@@ -1,0 +1,12 @@
+{
+  "name": "@pass-cards/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "vuetify": "^4.1.0"
+  }
+}

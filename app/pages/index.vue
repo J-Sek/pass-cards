@@ -67,16 +67,17 @@ v-main(scrollable)
 
 <script setup lang="ts">
 import { mdiArrowLeft, mdiArrowUp, mdiCogOutline, mdiRestore } from '@mdi/js'
+import { PassCard } from '@pass-cards/card-dialog'
 import { useVirtualFocus } from '@vuetify/v0'
 import { clamp, range } from '@vuetify/v0/utilities'
 import { useWords } from '~/composables/words';
+import { cardSize, computeSeed, generateCards, pinLength } from '~/utils/cards';
 import { waitFor } from '~/utils/timing';
 
 const { width: windowWidth, height: windowHeight } = useWindowSize()
 
 const username = useLocalStorage('username', '')
 const pin = ref('')
-const pinLength = 4
 
 const showSettings = ref(false)
 const settingsIcon = computed(() =>
@@ -105,42 +106,13 @@ const fontFamily = useLocalStorage('font-family', 'Azeret Mono')
 const fontClass = computed(() => `font-${fontFamilyOptions.indexOf(fontFamily.value)}`)
 
 const setColumns = 3
-const cardSize = 10
 
-const seed = computed(() => {
-  if (!username.value?.length || graphemeLength(pin.value) != pinLength)
-    return 0
-  return hashCode(username.value + String(pin.value))
-})
-
-function getColor(baseColor: string, rotateHue?: number) {
-  return rotateHue
-    ? `oklch(from rgb(var(--v-theme-${baseColor})) l c calc(mod(h + ${rotateHue * 360}, 360)))`
-    : `rgb(var(--v-theme-${baseColor}))`
-}
-
-const separators = computed<TSign[]>(() => '+------|······'.split('').map(v => ({ value: v, color: getColor('primary', .8) })))
-const allCharacters = computed<TSign[]>(() => [
-  [
-    'abcdefghijklmnopqrstuvwxyz',
-    'abcdefghijklmnopqrstuvwxyz'.toUpperCase(),
-  ].join('').split('').map(v => ({ value: v, color: getColor('primary') })),
-
-  '1234567890'.split('').map(v => ({ value: v, color: getColor('primary', .2) })),
-  '!?@#$%&'.split('').map(v => ({ value: v, color: getColor('primary', .4) })),
-  separators.value,
-  [
-    '€§↓',  // ALT +         5|7|U
-    '¡¿↑',  // ALT + SHIFT + 1|2|U
-  ].join('').split('').map(v => ({ value: v, color: getColor('primary', 6) })),
-].flatMap(x => x))
+const seed = computed(() => computeSeed(username.value, pin.value))
 
 const isLoadingCards = ref(false)
 
 const cards = shallowRef<TCard[]>([])
 
-// Keyboard navigation across the closed cards: the grid is the single tab stop,
-// arrows move a virtual cursor (aria-activedescendant), Enter/Space opens it.
 const gridUid = useId()
 const cardCellId = (i: number) => `${gridUid}-card-${i}`
 
@@ -158,8 +130,6 @@ const { highlightedId, highlight, clear } = useVirtualFocus(
   },
 )
 
-// Track input modality so a mouse open/close doesn't scroll a card into view:
-// we only highlight (which scrolls) for keyboard. Ring is gated by :focus-visible.
 const keyboardActive = ref(false)
 const NAV_KEYS = ['Tab', 'Enter', ' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Escape']
 useEventListener('keydown', (e: KeyboardEvent) => {
@@ -168,7 +138,6 @@ useEventListener('keydown', (e: KeyboardEvent) => {
 useEventListener('pointerdown', () => { keyboardActive.value = false })
 
 function onGridFocus() {
-  // Only for keyboard focus, so a pointer focus triggers neither scroll nor ring.
   if (keyboardActive.value && highlightedId.value == null && cards.value.length) {
     highlight(cards.value[0]!.index)
   }
@@ -180,9 +149,6 @@ function openHighlighted() {
 }
 
 function onCardClosed() {
-  // Always reclaim focus, else it stays stranded on the closed card's cells and
-  // the next arrow navigates inside it. preventScroll + :focus-visible keep a
-  // mouse close from scrolling to or ringing the card.
   nextTick(() => gridRef.value?.focus({ preventScroll: true }))
 }
 
@@ -195,23 +161,10 @@ async function computeCards() {
     cards.value = []
   } else {
     isLoadingCards.value = true
-    const r = new Randomizer(seed.value)
     loadWords()
     await waitFor(() => wordsArray.value.length > 0, 50)
-    r.setWords(wordsArray.value)
     await delay(150)
-    // TODO: push to background worker
-    cards.value = range(setColumns * setRows.value)
-      .map((ci) => ({
-        index: ci,
-        characters: [
-          ...r.nextWord().split('')
-            .map((v) => ({ value: v, color: getColor('primary') })),
-          r.nextElement(separators.value),
-          ...range(cardSize ** 2 - 8)
-            .map(() => r.nextElement(allCharacters.value)),
-        ],
-      }))
+    cards.value = generateCards(seed.value, wordsArray.value, setColumns * setRows.value)
     await delay(150)
     isLoadingCards.value = false
   }
@@ -241,12 +194,9 @@ onMounted(async () => {
   --code-font-family: 'Red Hat Mono'
   --code-font-weight: 500
 
-// Settings toggle: scale-swap between cog and arrow icons (à la Ark UI Swap)
 .swap-scale-enter-active,
 .swap-scale-leave-active
   transition: transform .25s ease, opacity .25s ease
-// Overlap leave + enter so the icons cross at ~50% scale instead of
-// fully collapsing and re-growing.
 .swap-scale-leave-active
   position: absolute
 .swap-scale-enter-from,
@@ -254,7 +204,6 @@ onMounted(async () => {
   transform: scale(0)
   opacity: 0
 
-// Restore: full 360° spin on each click
 .restore-icon
   transition: transform .5s ease
 
@@ -269,8 +218,6 @@ onMounted(async () => {
   &:focus
     outline: none
 
-  // :focus-visible limits the cursor ring to keyboard focus (no ring on a mouse
-  // open/close), and focus leaving the grid hides it while a card is open.
   &:focus-visible .v-card-outter[data-highlighted]
     outline: 2px solid rgb(var(--v-theme-primary))
     outline-offset: 4px
@@ -318,8 +265,6 @@ onMounted(async () => {
       padding-top: 0
       padding-bottom: 0
 
-// The form card precedes .settings-card in the DOM (so Tab flows form → settings),
-// so reach back to it with :has() instead of the old `.settings-card + .v-card`.
 .v-card:has(+ .settings-card)
   transition: margin-bottom .3s ease-in-out
 

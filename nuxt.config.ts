@@ -54,7 +54,7 @@ export default defineNuxtConfig({
   ],
 
   build: {
-    transpile: ['vuetify'],
+    transpile: ['vuetify', '@pass-cards/card-dialog', '@pass-cards/core'],
   },
 
   runtimeConfig: {

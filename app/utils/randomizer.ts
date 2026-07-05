@@ -1,4 +1,3 @@
-// https://stackoverflow.com/questions/521295/seeding-the-random-number-generator-in-javascript
 function mulberry32(seed: number) {
   return function () {
     let t = seed += 0x6D2B79F5;

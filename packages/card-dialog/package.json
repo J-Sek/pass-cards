@@ -1,0 +1,30 @@
+{
+  "name": "@pass-cards/card-dialog",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --browser.headless",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "@vuetify/v0": "^1.0.0-beta.1",
+    "vue": "^3.5.0",
+    "vuetify": "^4.1.0"
+  },
+  "devDependencies": {
+    "@pass-cards/core": "workspace:*",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/browser-playwright": "^4.1.9",
+    "@vue/test-utils": "^2.4.11",
+    "@vuetify/v0": "^1.0.0-beta.1",
+    "playwright": "^1.61.1",
+    "pug": "3.0.4",
+    "vitest": "^4.1.9",
+    "vue": "3.5.39",
+    "vuetify": "4.1.3"
+  }
+}

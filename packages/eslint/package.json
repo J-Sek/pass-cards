@@ -1,0 +1,17 @@
+{
+  "name": "@pass-cards/eslint",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint-plugin-vue": "10.9.2",
+    "typescript-eslint": "8.62.1"
+  },
+  "peerDependencies": {
+    "eslint": ">=9"
+  }
+}
