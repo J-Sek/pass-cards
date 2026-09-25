@@ -24,7 +24,7 @@ export function useAppThemeStore() {
   const { global, current } = useTheme()
   const forceDark = useRouteQuery('dark', '', { transform: Boolean })
 
-  Promise.try(() => localStorage.removeItem('theme'))
+  Promise.try(() => globalThis.localStorage?.removeItem('theme'))
   const storedMode = useLocalStorage<ThemeMode>('theme:mode', forceDark.value ? 'dark' : 'system', { writeDefaults: false })
   const storedPrimary = useLocalStorage('theme:colors:primary', 'violet', { writeDefaults: false })
   const storedSurface = useLocalStorage('theme:colors:surface', 'slate', { writeDefaults: false })
