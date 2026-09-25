@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "bun: build",
+            "label": "pnpm: build",
             "type": "shell",
-            "command": "bun run build",
+            "command": "pnpm build",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -12,15 +12,21 @@
             }
         },
         {
-            "label": "bun: dev",
+            "label": "pnpm: dev",
             "type": "shell",
-            "command": "bun dev",
+            "command": "pnpm dev",
+            "problemMatcher": []
+        },
+        {
+            "label": "pnpm: preview",
+            "type": "shell",
+            "command": "pnpm run preview",
             "problemMatcher": []
         },
         {
             "label": "nuxt: prepare",
             "type": "shell",
-            "command": "bun postinstall",
+            "command": "pnpm run postinstall",
             "problemMatcher": []
         }
     ]

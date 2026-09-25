@@ -6,6 +6,7 @@
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev --port 4000",
+    "preview": "nuxt preview",
     "test": "vitest run && pnpm -r run test",
     "test:ui": "vitest --ui",
     "test:watch": "vitest",
